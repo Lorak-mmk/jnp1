@@ -1,9 +1,9 @@
 #include <algorithm>
 #include <cfloat>
 #include <iostream>
+#include <regex>
 #include <stdlib>
 #include <string>
-#include <regex>
 
 using time_point = pair<int, int>;
 using stops = unordered_map<string, time_point>;
@@ -11,11 +11,9 @@ using single_ticket = tuple<string, double, time_point>;
 // każdy element to odpowiednio nazwa przystanku, numer kursu
 using travel = vector<string, int>;
 
-
-std::regex add_course_regex("(-?\\d+)((?: (?:\\d{1,2}:\\d{2}) (?:[a-zA-Z_^]+))+)");
-std::regex add_ticket_regex("([a-zA-Z ]+) (\\d+\\.\\d{2}) ((?!0)\\d+)");
-std::regex ticket_query_regex("\\? ([a-zA-Z_^]+(?: -?\\d+ [a-zA-Z_^]+)*)");
-
+static const std::regex add_course_regex("(-?\\d+)((?: (?:\\d{1,2}:\\d{2}) (?:[a-zA-Z_^]+))+)");
+static const std::regex add_ticket_regex("([a-zA-Z ]+) (\\d+\\.\\d{2}) ((?!0)\\d+)");
+static const std::regex travel_query_regex("\\? ([a-zA-Z_^]+(?: -?\\d+ [a-zA-Z_^]+)*)");
 
 unordered_map<int, stops> courses;
 vector<single_tickets> tickets;
@@ -79,8 +77,7 @@ int time_of_connection(travel current_travel) {
     time_point departure_from_stop = find(course, current_stop_name);
     time_point arrival_for_the_stop = find(course, next_stop_name);
 
-    if (departure_from_stop == coures.end() ||
-        arrival_for_the_stop == courses.end()) {
+    if (departure_from_stop == coures.end() || arrival_for_the_stop == courses.end()) {
       // w podanym kursie nie ma takiego przystanku
       return current_travel.size() * (-1);
     }
@@ -102,28 +99,44 @@ int time_of_connection(travel current_travel) {
 }
 
 void print_error(size_t line_number, std::string line) {
-    std::cerr << "Error in line " << line_number << ": " << line << "\n";
+  std::cerr << "Error in line " << line_number << ": " << line << "\n";
 }
 
-int main(int argc, char* argv[]){
-    std::string line;
-    size_t line_number = 0;
+std::pair<int, stops> parse_course(std::smatch sm) {
+    int number = std::stoi(sm[1].str()); //TODO: handle exceptions to catch numbers that are too big
     
-    while(std::getline(std::cin, line)) {
-        line_number++;
-        if(line.length() == 0) continue;
-        
-        std::smatch sm;
-        if(std::regex_match(line, sm, add_course_regex)){
+}
 
-        } else if(std::regex_match(line, sm, add_ticket_regex)) {
+single_ticket parse_ticket(std::smatch sm) {
+  std::string name = sm[1].str();
+  double price = std::stod(sm[2].str());
+  time_point tp = std::make_pair(0, 0);  // TODO: Let's discuss form of time_point first. Also, if
+                                         // time_point ends up being from std::chrono, then this
+                                         // should be duration from std::chrono
+  return std::make_tuple(name, price, tp);
+}
 
-        } else if(std::regex_match(line, sm, ticket_query_regex)) {
+travel parse_travel_query(std::smatch sm) {
+    
+}
 
-        } else {
-            print_error(line_number, line);
-        }
+int main(int argc, char* argv[]) {
+  std::string line;
+  size_t line_number = 0;
+
+  while (std::getline(std::cin, line)) {
+    line_number++;
+    if (line.length() == 0) continue;
+
+    std::smatch sm;
+    if (std::regex_match(line, sm, add_course_regex)) {
+      std::pair<int, stops> course = parse_course(sm);
+    } else if (std::regex_match(line, sm, add_ticket_regex)) {
+      single_ticket ticket = parse_ticket(sm);
+    } else if (std::regex_match(line, sm, travel_query_regex)) {
+      travel query = parse_travel_query(sm);
+    } else {
+      print_error(line_number, line);
     }
-    
-    
+  }
 }
