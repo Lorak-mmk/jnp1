@@ -1,15 +1,16 @@
 #include <algorithm>
 #include <iostream>
+#include <unordered_map>
 #include <regex>
 #include <string>
+#include <climits>
 
-using time_point = pair <int, int>
-using stops = std::unordered_map<string, time_point>;
-// trzymamy cenę biletu pomnożoną przez 100
+using time_point = std::pair <int, int>;
+using stops = std::unordered_map<std::string, time_point>;
+// price of the ticket is multiplied by 100
 using single_ticket = std::tuple<string, long long, long long>;
-// każdy element to odpowiednio nazwa przystanku, numer kursu
+// each element contains name of the stop and number of the course
 using travel = std::vector<string, long long>;
-
 
 static const std::regex add_course_regex("(\\d+)((?: (?:\\d{1,2}:[0-5]\\d) (?:[a-zA-Z_^]+))+)");
 static const std::regex add_ticket_regex("([a-zA-Z ]+) (\\d+\\.\\d{2}) ((?!0)\\d+)");
@@ -28,11 +29,11 @@ long long count_time_distance(time_point a, time_point b){
 }
 
 // travel_time - czas, na który mamy kupić bilety podany w minutach
-std::vector<string> buy_tickets(long long travel_time) {
-  long double smallest_cost = LDBL_MAX;
-  std::vector<string> best_tickets;
+std::vector<string> buy_tickets(std::vector<single_tickets> tickets, long long travel_time) {
+  long long smallest_cost = LLONG_MAX;
+  std::vector<std::string> best_tickets;
 
-  for (size_t) i = 0; i < tickets.size(); i++){
+  for (size_t i = 0; i < tickets.size(); i++){
     long long summed_time = std::get<2>(tickets[i]);
     long double summed_cost = std::get<1>(tickets[i]);
     if (travel_time >= summed_time && summed_cost < smallest_cost) {
@@ -72,34 +73,35 @@ std::vector<string> buy_tickets(long long travel_time) {
 // sumaryczny czas podróży
 // lub liczbę ujemną równą current_travel.size(), gdy dane wejściowe są niepoprawne
 // inna liczba ujemna reprezentuje indeks przystanku, na którym trzeba czekać
-int time_of_connection(travel current_travel) {
+int time_of_connection(std::unordered_map<long long, stops> courses, travel current_travel) {
   time_point current_time, start_point;
 
   for (size_t i = 0; i < current_travel.size() - 1; i++) {
     int course_number = current_travel[i].second;
-    stops course = find(courses, course_number);
 
-    if (course == courses.end()) {
+    if (courses.find(course_number) == courses.end()) {
       // nie istnieje kurs o zadanym numerze
       return current_travel.size() * (-1);
     }
+    stops current_course = courses[course_number];
 
     int current_stop_name = current_travel[i].first;
     int next_stop_name = current_travel[i + 1].first;
 
-    time_point departure_from_stop = find(course, current_stop_name);
-    time_point arrival_for_the_stop = find(course, next_stop_name);
-
-    if (departure_from_stop == coures.end() || arrival_for_the_stop == courses.end()) {
+    if (current_course.find(current_stop_name) == coures.end() ||
+      current_course.find(next_stop_name) == courses.end()) {
       // w podanym kursie nie ma takiego przystanku
       return current_travel.size() * (-1);
     }
+
+    time_point departure_from_stop = current_course[current_stop_name];
+    time_point arrival_for_the_stop = current_course[next_stop_name];
 
     if (i == 0) {
       current_time = departure_from_stop;
       start_point = departure_from_stop;
     } else {
-      if (current_time == departure_from_stop) {
+      if (equal_time_points(current_time, departure_from_stop)) {
         // trzeba czekać na tym przystanku
         return -i;
       } else {
