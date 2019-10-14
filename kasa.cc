@@ -11,9 +11,9 @@ using single_ticket = tuple<string, double, time_point>;
 // każdy element to odpowiednio nazwa przystanku, numer kursu
 using travel = vector<string, int>;
 
-static const std::regex add_course_regex("(-?\\d+)((?: (?:\\d{1,2}:\\d{2}) (?:[a-zA-Z_^]+))+)");
+static const std::regex add_course_regex("(\\d+)((?: (?:\\d{1,2}:[0-5]\\d) (?:[a-zA-Z_^]+))+)");
 static const std::regex add_ticket_regex("([a-zA-Z ]+) (\\d+\\.\\d{2}) ((?!0)\\d+)");
-static const std::regex travel_query_regex("\\? ([a-zA-Z_^]+(?: -?\\d+ [a-zA-Z_^]+)*)");
+static const std::regex travel_query_regex("\\? ([a-zA-Z_^]+(?: \\d+ [a-zA-Z_^]+)*)");
 
 unordered_map<int, stops> courses;
 vector<single_tickets> tickets;
@@ -98,13 +98,28 @@ int time_of_connection(travel current_travel) {
   return current_time - start_point;
 }
 
+void string_split(const std::string& str, vector<std::string>& v, const char d = ' '){
+    std::stringstream ss(str);
+    std::string token;
+    while(std::getline(ss, token, d)){
+        if(token.length() > 0) v.push_back(token);
+    }
+}
+
 void print_error(size_t line_number, std::string line) {
   std::cerr << "Error in line " << line_number << ": " << line << "\n";
 }
 
 std::pair<int, stops> parse_course(std::smatch sm) {
     int number = std::stoi(sm[1].str()); //TODO: handle exceptions to catch numbers that are too big
-    
+    std::vector<std::string> v;
+    string_split(sm[2].str(), v);
+    for(int i = 0; i < v.size() - 1; i += 2){
+        std::vector<std::string> time;
+        string_split(v[i], time, ':');
+        time_point tp = std::make_pair(std::stoi(time[0]), std::stoi(time[1]));
+        std::string stop = v[i + 1];
+    }
 }
 
 single_ticket parse_ticket(std::smatch sm) {
