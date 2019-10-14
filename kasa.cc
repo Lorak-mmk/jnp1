@@ -2,6 +2,8 @@
 #include <cfloat>
 #include <iostream>
 #include <stdlib>
+#include <string>
+#include <regex>
 
 using time_point = pair<int, int>;
 using stops = unordered_map<string, time_point>;
@@ -9,7 +11,14 @@ using single_ticket = tuple<string, double, time_point>;
 // każdy element to odpowiednio nazwa przystanku, numer kursu
 using travel = vector<string, int>;
 
+
+std::regex add_course_regex("(-?\\d+)((?: (?:\\d{1,2}:\\d{2}) (?:[a-zA-Z_^]+))+)");
+std::regex add_ticket_regex("([a-zA-Z ]+) (\\d+\\.\\d{2}) ((?!0)\\d+)");
+std::regex ticket_query_regex("\\? ([a-zA-Z_^]+(?: -?\\d+ [a-zA-Z_^]+)*)");
+
+
 unordered_map<int, stops> courses;
+vector<single_tickets> tickets;
 
 int time_distance(time_point a, time_point b) {
   return abs(a.first - b.first) * 60 + abs(a.second - b.second);
@@ -19,8 +28,6 @@ bool equal_times(time_point a, time_point b) {
   if (a.first == b.first && a.second == b.second) return true;
   return false;
 }
-
-vector<single_tickets> tickets;
 
 // travel_time - czas, na który mamy kupić bilety podany w minutach
 vector<string> buy_tickets(int travel_time) {
@@ -92,4 +99,31 @@ int time_of_connection(travel current_travel) {
   }
 
   return current_time - start_point;
+}
+
+void print_error(size_t line_number, std::string line) {
+    std::cerr << "Error in line " << line_number << ": " << line << "\n";
+}
+
+int main(int argc, char* argv[]){
+    std::string line;
+    size_t line_number = 0;
+    
+    while(std::getline(std::cin, line)) {
+        line_number++;
+        if(line.length() == 0) continue;
+        
+        std::smatch sm;
+        if(std::regex_match(line, sm, add_course_regex)){
+
+        } else if(std::regex_match(line, sm, add_ticket_regex)) {
+
+        } else if(std::regex_match(line, sm, ticket_query_regex)) {
+
+        } else {
+            print_error(line_number, line);
+        }
+    }
+    
+    
 }
