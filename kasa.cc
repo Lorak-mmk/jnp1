@@ -76,25 +76,25 @@ std::vector<std::string> buy_tickets(std::vector<single_ticket> tickets, long lo
 // current_travel zawiera opis niepustej podróży
 // funkcja time_of_connection zwraca nieujemną liczbę reprezentującą
 // sumaryczny czas podróży
-// lub liczbę ujemną równą current_travel.size(), gdy dane wejściowe są niepoprawne
+// lub liczbę ujemną równą current_travel.size(), gdy dane wejściowe są niepoprawne
 // inna liczba ujemna reprezentuje indeks przystanku, na którym trzeba czekać
-int time_of_connection(std::unordered_map<long long, stops> courses, travel current_travel) {
+int time_of_connection(std::unordered_map <long long, stops> courses, travel current_travel) {
   time_point current_time, start_point;
 
   for (size_t i = 0; i < current_travel.size() - 1; i++) {
-    int course_number = current_travel[i].second;
+    long long course_number = current_travel[i].second;
 
-    if (courses.find(course_number) == courses.end()) {
+    if (!(courses.find(course_number) != courses.end())) {
       // nie istnieje kurs o zadanym numerze
       return current_travel.size() * (-1);
     }
     stops current_course = courses[course_number];
 
-    int current_stop_name = current_travel[i].first;
-    int next_stop_name = current_travel[i + 1].first;
+    std::string current_stop_name = current_travel[i].first;
+    std::string next_stop_name = current_travel[i + 1].first;
 
-    if (current_course.find(current_stop_name) == courses.end() ||
-        current_course.find(next_stop_name) == courses.end()) {
+    if (current_course.find(current_stop_name) == current_course.end() ||
+        current_course.find(next_stop_name) == current_course.end()) {
       // w podanym kursie nie ma takiego przystanku
       return current_travel.size() * (-1);
     }
