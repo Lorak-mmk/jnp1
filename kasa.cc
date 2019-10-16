@@ -236,16 +236,30 @@ travel parse_travel_query(const std::smatch& sm) {
 bool try_perform_query(const std::vector<single_ticket>& tickets,
                        const std::unordered_map<long long, stops>& courses, const std::smatch& sm) {
   travel query;
+  int time;
+  std::vector<std::string> solution;
+
   try {
     query = parse_travel_query(sm);
   } catch (const std::logic_error& e) {
     return false;
   }
-  int time = time_of_connection(courses, query);
-  if (time < 0) {
-    // TODO: handle
+  try{
+    time = time_of_connection(courses, query);
+  }catch (const std::invalid_argument& e){
+    return false;
+  }catch(const std::domain_error& e){
+    std::cout << ":-( " << e.what() << "\n";
+    return true;
   }
-  std::vector<std::string> solution = buy_tickets(tickets, time);
+
+  try{
+    solution = buy_tickets(tickets, time);
+  }catch(const std::invalid_argument& e){
+    std::cout << ":-|\n";
+    return true;
+  }
+
   std::cout << "!";
   for (auto ticket : solution) {
     std::cout << " " << ticket;
