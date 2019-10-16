@@ -132,7 +132,7 @@ void print_error(size_t line_number, std::string line) {
   std::cerr << "Error in line " << line_number << ": " << line << "\n";
 }
 
-std::pair<long long, stops> parse_course(std::smatch sm) {
+std::pair<long long, stops> parse_course(const std::smatch& sm) {
   long long number = std::stoll(sm[1].str());
   stops course;
 
@@ -164,7 +164,21 @@ std::pair<long long, stops> parse_course(std::smatch sm) {
   return std::make_pair(number, course);
 }
 
-single_ticket parse_ticket(std::smatch sm) {
+bool try_add_course(std::unordered_map<long long, stops>& courses, const std::smatch& sm) {
+  std::pair<long long, stops> course;
+  try {
+    course = parse_course(sm);
+  } catch (const std::logic_error& e) {
+    return false;
+  }
+  if (courses.count(course.first)) {
+    return false;
+  }
+  courses[course.first] = course.second;
+  return true;
+}
+
+single_ticket parse_ticket(const std::smatch& sm) {
   std::string name = sm[1].str();
   // Część całkowita i ułamkowa w osobnych grupach, by łatwo było je złączyć
   long long price = std::stoll(sm[2].str() + sm[3].str());
@@ -172,7 +186,23 @@ single_ticket parse_ticket(std::smatch sm) {
   return std::make_tuple(name, price, duration);
 }
 
-travel parse_travel_query(std::smatch sm) {
+bool try_add_ticket(std::vector<single_ticket>& tickets, const std::smatch& sm) {
+  single_ticket ticket;
+  try {
+    ticket = parse_ticket(sm);
+  } catch (const std::logic_error& e) {
+    return false;
+  }
+  for (auto t : tickets) {
+    if (std::get<0>(t) == std::get<0>(ticket)) {
+      return false;
+    }
+  }
+  tickets.push_back(ticket);
+  return true;
+}
+
+travel parse_travel_query(const std::smatch& sm) {
   std::string travel_str = sm[1].str();
   std::vector<std::string> args;
   string_split(travel_str, args);
@@ -192,10 +222,31 @@ travel parse_travel_query(std::smatch sm) {
   return result;
 }
 
-int main(int argc, char* argv[]) {
+bool try_perform_query(const std::vector<single_ticket>& tickets,
+                       const std::unordered_map<long long, stops>& courses, const std::smatch& sm) {
+  travel query;
+  try {
+    query = parse_travel_query(sm);
+  } catch (const std::logic_error& e) {
+    return false;
+  }
+  int time = time_of_connection(courses, query);
+  if (time < 0) {
+    // TODO: handle
+  }
+  std::vector<std::string> solution = buy_tickets(tickets, time);
+  std::cout << "!";
+  for (auto ticket : solution) {
+    std::cout << " " << ticket;
+  }
+  std::cout << "\n";
+
+  return true;
+}
+
+int main() {
   // courses: numer linii -> rozkład
   std::unordered_map<long long, stops> courses;
-  // tickets: lista biletów
   std::vector<single_ticket> tickets;
 
   std::string line;
@@ -207,43 +258,18 @@ int main(int argc, char* argv[]) {
 
     std::smatch sm;
     if (std::regex_match(line, sm, add_course_regex)) {
-      std::pair<long long, stops> course;
-      try {
-        course = parse_course(sm);
-      } catch (const std::logic_error& e) {
+      if (!try_add_course(courses, sm)) {
         print_error(line_number, line);
-        continue;
       }
-      if (courses.count(course.first)) {
-        print_error(line_number, line);
-        continue;
-      }
-      courses[course.first] = course.second;
-
     } else if (std::regex_match(line, sm, add_ticket_regex)) {
-      single_ticket ticket;
-      try {
-        ticket = parse_ticket(sm);
-      } catch (const std::logic_error& e) {
+      if (!try_add_ticket(tickets, sm)) {
         print_error(line_number, line);
-        continue;
       }
-      for (auto t : tickets) {
-        if (std::get<0>(t) == std::get<0>(ticket)) {
-          print_error(line_number, line);
-          continue;
-        }
-      }
-      tickets.push_back(ticket);
-
     } else if (std::regex_match(line, sm, travel_query_regex)) {
-      travel query;
-      try {
-        query = parse_travel_query(sm); 
-      } catch (const std::logic_error& e) {
+      if (!try_perform_query(tickets, courses, sm)) {
         print_error(line_number, line);
-        continue;
       }
+
     } else {
       print_error(line_number, line);
     }
