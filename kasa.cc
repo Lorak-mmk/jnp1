@@ -33,7 +33,8 @@ long long count_time_distance(time_point a, time_point b) {
 }
 
 // travel_time - czas, na który mamy kupić bilety podany w minutach
-std::vector<std::string> buy_tickets(std::vector<single_ticket> tickets, long long travel_time) {
+std::vector<std::string> buy_tickets(const std::vector<single_ticket>& tickets,
+                                     long long travel_time) {
   long long smallest_cost = LLONG_MAX;
   std::vector<std::string> best_tickets;
 
@@ -78,7 +79,8 @@ std::vector<std::string> buy_tickets(std::vector<single_ticket> tickets, long lo
 // sumaryczny czas podróży
 // lub liczbę ujemną równą current_travel.size(), gdy dane wejściowe są niepoprawne
 // inna liczba ujemna reprezentuje indeks przystanku, na którym trzeba czekać
-int time_of_connection(std::unordered_map <long long, stops> courses, travel current_travel) {
+int time_of_connection(const std::unordered_map<long long, stops>& courses,
+                       const travel& current_travel) {
   time_point current_time, start_point;
 
   for (size_t i = 0; i < current_travel.size() - 1; i++) {
@@ -88,7 +90,7 @@ int time_of_connection(std::unordered_map <long long, stops> courses, travel cur
       // nie istnieje kurs o zadanym numerze
       return current_travel.size() * (-1);
     }
-    stops current_course = courses[course_number];
+    stops current_course = courses.at(course_number);
 
     std::string current_stop_name = current_travel[i].first;
     std::string next_stop_name = current_travel[i + 1].first;
@@ -130,42 +132,77 @@ void print_error(size_t line_number, std::string line) {
   std::cerr << "Error in line " << line_number << ": " << line << "\n";
 }
 
-std::pair<long long, stops> parse_course(std::smatch sm) {
-  long long number =
-      std::stoll(sm[1].str());  // TODO: handle exceptions to catch numbers that are too big
+std::pair<long long, stops> parse_course(const std::smatch& sm) {
+  long long number = std::stoll(sm[1].str());
   stops course;
 
   std::vector<std::string> v;
   string_split(sm[2].str(), v);
+
   time_point previous = opening_time;
   for (int i = 0; i < (int)v.size() - 1; i += 2) {
     std::vector<std::string> time;
     string_split(v[i], time, ':');
+
     time_point tp = std::make_pair(std::stoi(time[0]), std::stoi(time[1]));
     if (tp <= previous) {
-      // TODO: handle error
+      throw std::invalid_argument("Invalid time - earlier than on a previous stop");
     }
     previous = tp;
+
     std::string stop = v[i + 1];
     if (course.count(stop)) {
-      // TODO: handle error
+      throw std::invalid_argument("This stop already exists in course");
     }
     course[stop] = tp;
+  }
+
+  if (previous > closing_time) {
+    throw std::invalid_argument("Invalid time - after closing time");
   }
 
   return std::make_pair(number, course);
 }
 
-single_ticket parse_ticket(std::smatch sm) {
+bool try_add_course(std::unordered_map<long long, stops>& courses, const std::smatch& sm) {
+  std::pair<long long, stops> course;
+  try {
+    course = parse_course(sm);
+  } catch (const std::logic_error& e) {
+    return false;
+  }
+  if (courses.count(course.first)) {
+    return false;
+  }
+  courses[course.first] = course.second;
+  return true;
+}
+
+single_ticket parse_ticket(const std::smatch& sm) {
   std::string name = sm[1].str();
   // Część całkowita i ułamkowa w osobnych grupach, by łatwo było je złączyć
   long long price = std::stoll(sm[2].str() + sm[3].str());
-  long long duration =
-      std::stoll(sm[4].str());  // TODO: handle exceptions to catch numbers that are too big
+  long long duration = std::stoll(sm[4].str());
   return std::make_tuple(name, price, duration);
 }
 
-travel parse_travel_query(std::smatch sm) {
+bool try_add_ticket(std::vector<single_ticket>& tickets, const std::smatch& sm) {
+  single_ticket ticket;
+  try {
+    ticket = parse_ticket(sm);
+  } catch (const std::logic_error& e) {
+    return false;
+  }
+  for (auto t : tickets) {
+    if (std::get<0>(t) == std::get<0>(ticket)) {
+      return false;
+    }
+  }
+  tickets.push_back(ticket);
+  return true;
+}
+
+travel parse_travel_query(const std::smatch& sm) {
   std::string travel_str = sm[1].str();
   std::vector<std::string> args;
   string_split(travel_str, args);
@@ -173,24 +210,43 @@ travel parse_travel_query(std::smatch sm) {
 
   for (int i = 0; i < (int)args.size(); i += 2) {
     long long nr;
-    if (i == (int)args.size() - 1) {
+    if (i != (int)args.size() - 1) {
       nr = std::stoll(args[i + 1]);
-      // TODO: check if number exists?
     } else {
       nr = -1;
     }
     std::string name = args[i];
-    // TOFO check if stop exists?
     result.push_back(std::make_pair(name, nr));
   }
 
   return result;
 }
 
-int main(int argc, char* argv[]) {
+bool try_perform_query(const std::vector<single_ticket>& tickets,
+                       const std::unordered_map<long long, stops>& courses, const std::smatch& sm) {
+  travel query;
+  try {
+    query = parse_travel_query(sm);
+  } catch (const std::logic_error& e) {
+    return false;
+  }
+  int time = time_of_connection(courses, query);
+  if (time < 0) {
+    // TODO: handle
+  }
+  std::vector<std::string> solution = buy_tickets(tickets, time);
+  std::cout << "!";
+  for (auto ticket : solution) {
+    std::cout << " " << ticket;
+  }
+  std::cout << "\n";
+
+  return true;
+}
+
+int main() {
   // courses: numer linii -> rozkład
   std::unordered_map<long long, stops> courses;
-  // tickets: lista biletów
   std::vector<single_ticket> tickets;
 
   std::string line;
@@ -202,21 +258,18 @@ int main(int argc, char* argv[]) {
 
     std::smatch sm;
     if (std::regex_match(line, sm, add_course_regex)) {
-      std::pair<long long, stops> course = parse_course(sm);
-      if (courses.count(course.first)) {
-        // TODO: handle error
+      if (!try_add_course(courses, sm)) {
+        print_error(line_number, line);
       }
-      courses[course.first] = course.second;
     } else if (std::regex_match(line, sm, add_ticket_regex)) {
-      single_ticket ticket = parse_ticket(sm);
-      for (auto t : tickets) {
-        if (std::get<0>(t) == std::get<0>(ticket)) {
-          // TODO: handle error
-        }
+      if (!try_add_ticket(tickets, sm)) {
+        print_error(line_number, line);
       }
-      tickets.push_back(ticket);
     } else if (std::regex_match(line, sm, travel_query_regex)) {
-      travel query = parse_travel_query(sm);
+      if (!try_perform_query(tickets, courses, sm)) {
+        print_error(line_number, line);
+      }
+
     } else {
       print_error(line_number, line);
     }
