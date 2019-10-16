@@ -80,8 +80,8 @@ std::vector<std::string> buy_tickets(const std::vector<single_ticket>& tickets,
 // funkcja time_of_connection zwraca nieujemną liczbę reprezentującą
 // sumaryczny czas podróży
 // w przypadku niepoprawnych danych rzuca wyjątek invalid_argument
-//w przypadku gdy na pewnym przystanku trzeba czekać, rzuca wyjątek domain_error
-//z nazwą przystanku jako argumentem
+// w przypadku gdy na pewnym przystanku trzeba czekać, rzuca wyjątek domain_error
+// z nazwą przystanku jako argumentem
 int time_of_connection(const std::unordered_map<long long, stops>& courses,
                        const travel& current_travel) {
   time_point current_time, start_point;
@@ -244,18 +244,19 @@ bool try_perform_query(const std::vector<single_ticket>& tickets,
   } catch (const std::logic_error& e) {
     return false;
   }
-  try{
+
+  try {
     time = time_of_connection(courses, query);
-  }catch (const std::invalid_argument& e){
+  } catch (const std::invalid_argument& e) {
     return false;
-  }catch(const std::domain_error& e){
+  } catch (const std::domain_error& e) {
     std::cout << ":-( " << e.what() << "\n";
     return true;
   }
 
-  try{
+  try {
     solution = buy_tickets(tickets, time);
-  }catch(const std::invalid_argument& e){
+  } catch (const std::invalid_argument& e) {
     std::cout << ":-|\n";
     return true;
   }
