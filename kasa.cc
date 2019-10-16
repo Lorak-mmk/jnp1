@@ -71,24 +71,35 @@ std::vector<std::string> buy_tickets(const std::vector<single_ticket>& tickets,
       }
     }
   }
+  // nie da sie kupić biletów na zadany okres czasu
+  if (best_tickets.size() == 0) throw std::invalid_argument("");
   return best_tickets;
 }
 
 // current_travel zawiera opis niepustej podróży
 // funkcja time_of_connection zwraca nieujemną liczbę reprezentującą
 // sumaryczny czas podróży
-// lub liczbę ujemną równą current_travel.size(), gdy dane wejściowe są niepoprawne
-// inna liczba ujemna reprezentuje indeks przystanku, na którym trzeba czekać
+// w przypadku niepoprawnych danych rzuca wyjątek invalid_argument
+//w przypadku gdy na pewnym przystanku trzeba czekać, rzuca wyjątek domain_error
+//z nazwą przystanku jako argumentem
 int time_of_connection(const std::unordered_map<long long, stops>& courses,
                        const travel& current_travel) {
   time_point current_time, start_point;
+
+  // sprawdzamy czy przystanki nie powtarzają się wewnątrz podróży
+  for (size_t i = 0; i < current_travel.size(); i++) {
+    for (size_t j = i + 1; j < current_travel.size(); j++)
+      if (current_travel[i].first == current_travel[j].first) {
+        throw std::invalid_argument("");
+      }
+  }
 
   for (size_t i = 0; i < current_travel.size() - 1; i++) {
     long long course_number = current_travel[i].second;
 
     if (!(courses.find(course_number) != courses.end())) {
       // nie istnieje kurs o zadanym numerze
-      return current_travel.size() * (-1);
+      throw std::invalid_argument("");
     }
     stops current_course = courses.at(course_number);
 
@@ -98,7 +109,7 @@ int time_of_connection(const std::unordered_map<long long, stops>& courses,
     if (current_course.find(current_stop_name) == current_course.end() ||
         current_course.find(next_stop_name) == current_course.end()) {
       // w podanym kursie nie ma takiego przystanku
-      return current_travel.size() * (-1);
+      throw std::invalid_argument("");
     }
 
     time_point departure_from_stop = current_course[current_stop_name];
@@ -108,9 +119,9 @@ int time_of_connection(const std::unordered_map<long long, stops>& courses,
       current_time = departure_from_stop;
       start_point = departure_from_stop;
     } else {
-      if (equal_time_points(current_time, departure_from_stop)) {
+      if (!equal_time_points(current_time, departure_from_stop)) {
         // trzeba czekać na tym przystanku
-        return -i;
+        throw std::domain_error(current_stop_name);
       } else {
         current_time = arrival_for_the_stop;
       }
