@@ -75,8 +75,8 @@ std::vector<std::string> buy_tickets(const std::vector<single_ticket>& tickets,
 // funkcja time_of_connection zwraca nieujemną liczbę reprezentującą
 // sumaryczny czas podróży
 // w przypadku niepoprawnych danych rzuca wyjątek invalid_argument
-//w przypadku gdy na pewnym przystanku trzeba czekać, rzuca wyjątek domain_error
-//z nazwą przystanku jako argumentem
+// w przypadku gdy na pewnym przystanku trzeba czekać, rzuca wyjątek domain_error
+// z nazwą przystanku jako argumentem
 int time_of_connection(const std::unordered_map<long long, stops>& courses,
                        const travel& current_travel) {
   time_point current_time, start_point;
@@ -116,12 +116,13 @@ int time_of_connection(const std::unordered_map<long long, stops>& courses,
     } else {
       if (current_time == departure_from_stop) {
         current_time = arrival_for_the_next_stop;
-      } else if (current_time < departure_from_stop){
+      } else if (current_time < departure_from_stop) {
         // trzeba czekać na tym przystanku
         throw std::domain_error(current_stop_name);
-      }
-      else
+      } else {
+        // tramwaj odjechał przd naszym przyjazdem
         throw std::invalid_argument("");
+      }
     }
   }
 
