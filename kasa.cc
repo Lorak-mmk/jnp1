@@ -5,7 +5,7 @@
 #include <string>
 #include <unordered_map>
 
-//para reprezentujaca odpowiednio godzine i minuty
+// para reprezentujaca odpowiednio godzine i minuty
 using time_point = std::pair<int, int>;
 using stops = std::unordered_map<std::string, time_point>;
 // price of the ticket is multiplied by 100
@@ -47,6 +47,7 @@ std::vector<std::string> buy_tickets(const std::vector<single_ticket>& tickets,
     for (size_t j = i; j < tickets.size(); j++) {
       summed_cost = std::get<1>(tickets[i]) + std::get<1>(tickets[j]);
       summed_time = std::get<2>(tickets[i]) + std::get<2>(tickets[j]);
+
       if (travel_time <= summed_time && summed_cost < smallest_cost) {
         smallest_cost = summed_cost;
         best_tickets.clear();
@@ -103,6 +104,10 @@ int time_of_connection(const std::unordered_map<long long, stops>& courses,
 
     time_point departure_from_stop = current_course[current_stop_name];
     time_point arrival_for_the_next_stop = current_course[next_stop_name];
+
+    if (departure_from_stop > arrival_for_the_next_stop) {
+      throw std::invalid_argument("");
+    }
 
     if (i == 0) {
       current_time = arrival_for_the_next_stop;
@@ -257,7 +262,7 @@ bool try_perform_query(const std::vector<single_ticket>& tickets,
   std::cout << "!";
   for (size_t i = 0; i < solution.size(); i++) {
     std::cout << " " << solution[i];
-    if(i != solution.size() - 1) std::cout << ";";
+    if (i != solution.size() - 1) std::cout << ";";
   }
   std::cout << "\n";
 
