@@ -23,8 +23,7 @@ static const time_point closing_time = std::make_pair(21, 21);
 
 long long count_time_distance(time_point a, time_point b) {
   long long time_distance = abs(b.second - a.second);
-  if (b.second != a.second)
-    time_distance += 1;
+  if (b.second != a.second) time_distance += 1;
   time_distance += (abs(b.first - a.first) * 61);
   return time_distance;
 }
@@ -226,7 +225,8 @@ travel parse_travel_query(const std::smatch& sm) {
 }
 
 bool try_perform_query(const std::vector<single_ticket>& tickets,
-                       const std::unordered_map<long long, stops>& courses, const std::smatch& sm, int& ticket_sum) {
+                       const std::unordered_map<long long, stops>& courses, const std::smatch& sm,
+                       int& ticket_sum) {
   travel query;
   int time;
   std::vector<std::string> solution;
