@@ -217,9 +217,9 @@ travel parse_travel_query(const std::smatch& sm) {
   string_split(travel_str, args);
   travel result;
 
-  for (int i = 0; i < (int)args.size(); i += 2) {
+  for (size_t i = 0; i < args.size(); i += 2) {
     long long nr;
-    if (i != (int)args.size() - 1) {
+    if (i != args.size() - 1) {
       nr = std::stoll(args[i + 1]);
     } else {
       nr = -1;
@@ -259,9 +259,10 @@ bool try_perform_query(const std::vector<single_ticket>& tickets,
     return true;
   }
 
-  std::cout << "!";
-  for (auto ticket : solution) {
-    std::cout << " " << ticket;
+  std::cout << "! ";
+  for (size_t i = 0; i < solution.size(); i++) {
+    std::cout << " " << solution[i];
+    if(i != solution.size() - 1) std::cout << ";";
   }
   std::cout << "\n";
 
