@@ -234,7 +234,7 @@ travel parse_travel_query(const std::smatch& sm) {
 }
 
 bool try_perform_query(const std::vector<single_ticket>& tickets,
-                       const std::unordered_map<long long, stops>& courses, const std::smatch& sm) {
+                       const std::unordered_map<long long, stops>& courses, const std::smatch& sm, int& ticket_sum) {
   travel query;
   int time;
   std::vector<std::string> solution;
@@ -267,6 +267,8 @@ bool try_perform_query(const std::vector<single_ticket>& tickets,
   }
   std::cout << "\n";
 
+  ticket_sum += solution.size();
+
   return true;
 }
 
@@ -274,6 +276,7 @@ int main() {
   // courses: numer linii -> rozkład
   std::unordered_map<long long, stops> courses;
   std::vector<single_ticket> tickets;
+  int ticket_sum = 0;
 
   std::string line;
   size_t line_number = 0;
@@ -292,7 +295,7 @@ int main() {
         print_error(line_number, line);
       }
     } else if (std::regex_match(line, sm, travel_query_regex)) {
-      if (!try_perform_query(tickets, courses, sm)) {
+      if (!try_perform_query(tickets, courses, sm, ticket_sum)) {
         print_error(line_number, line);
       }
 
@@ -300,4 +303,6 @@ int main() {
       print_error(line_number, line);
     }
   }
+
+  std::cout << ticket_sum << "\n";
 }
