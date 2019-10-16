@@ -21,11 +21,6 @@ static const std::regex travel_query_regex("\\? ([a-zA-Z_^]+(?: \\d+ [a-zA-Z_^]+
 static const time_point opening_time = std::make_pair(5, 55);
 static const time_point closing_time = std::make_pair(21, 21);
 
-bool equal_time_points(time_point a, time_point b) {
-  if (a.first == b.first && a.second == b.second) return true;
-  return false;
-}
-
 long long count_time_distance(time_point a, time_point b) {
   long long time_distance = abs(b.second - a.second) + 1;
   time_distance += (abs(b.first - a.first) * 61);
@@ -113,17 +108,20 @@ int time_of_connection(const std::unordered_map<long long, stops>& courses,
     }
 
     time_point departure_from_stop = current_course[current_stop_name];
-    time_point arrival_for_the_stop = current_course[next_stop_name];
+    time_point arrival_for_the_next_stop = current_course[next_stop_name];
 
     if (i == 0) {
       current_time = departure_from_stop;
       start_point = departure_from_stop;
     } else {
-      if (!equal_time_points(current_time, departure_from_stop)) {
+      if (current_time == departure_from_stop) {
+        current_time = arrival_for_the_next_stop;
+      } else if (current_time < departure_from_stop) {
         // trzeba czekać na tym przystanku
         throw std::domain_error(current_stop_name);
       } else {
-        current_time = arrival_for_the_stop;
+        // tramwaj odjechał przd naszym przyjazdem
+        throw std::invalid_argument("");
       }
     }
   }
