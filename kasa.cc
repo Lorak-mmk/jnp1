@@ -259,7 +259,7 @@ bool try_perform_query(const std::vector<single_ticket>& tickets,
     return true;
   }
 
-  std::cout << "! ";
+  std::cout << "!";
   for (size_t i = 0; i < solution.size(); i++) {
     std::cout << " " << solution[i];
     if(i != solution.size() - 1) std::cout << ";";
