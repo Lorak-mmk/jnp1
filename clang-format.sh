@@ -1,2 +1,2 @@
 #!/bin/bash
-clang-format -style=file -i *.cc
+clang-format-8 -style=file -i *.cc
