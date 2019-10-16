@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 
+//para reprezentujaca odpowiednio godzine i minuty
 using time_point = std::pair<int, int>;
 using stops = std::unordered_map<std::string, time_point>;
 // price of the ticket is multiplied by 100
@@ -22,7 +23,8 @@ static const time_point opening_time = std::make_pair(5, 55);
 static const time_point closing_time = std::make_pair(21, 21);
 
 long long count_time_distance(time_point a, time_point b) {
-  long long time_distance = abs(b.second - a.second) + 1;
+  long long time_distance = abs(b.second - a.second);
+  if (b.second != a.second) time_distance += 1;
   time_distance += (abs(b.first - a.first) * 61);
   return time_distance;
 }
@@ -36,7 +38,7 @@ std::vector<std::string> buy_tickets(const std::vector<single_ticket>& tickets,
   for (size_t i = 0; i < tickets.size(); i++) {
     long long summed_time = std::get<2>(tickets[i]);
     long double summed_cost = std::get<1>(tickets[i]);
-    if (travel_time >= summed_time && summed_cost < smallest_cost) {
+    if (travel_time <= summed_time && summed_cost < smallest_cost) {
       smallest_cost = summed_cost;
       best_tickets.clear();
       best_tickets.push_back(std::get<0>(tickets[i]));
@@ -45,7 +47,7 @@ std::vector<std::string> buy_tickets(const std::vector<single_ticket>& tickets,
     for (size_t j = i; j < tickets.size(); j++) {
       summed_cost = std::get<1>(tickets[i]) + std::get<1>(tickets[j]);
       summed_time = std::get<2>(tickets[i]) + std::get<2>(tickets[j]);
-      if (travel_time >= summed_time && summed_cost < smallest_cost) {
+      if (travel_time <= summed_time && summed_cost < smallest_cost) {
         smallest_cost = summed_cost;
         best_tickets.clear();
         best_tickets.push_back(std::get<0>(tickets[i]));
@@ -55,7 +57,7 @@ std::vector<std::string> buy_tickets(const std::vector<single_ticket>& tickets,
       for (size_t k = j; k < tickets.size(); k++) {
         summed_cost = std::get<1>(tickets[i]) + std::get<1>(tickets[j]) + std::get<1>(tickets[k]);
         summed_time = std::get<2>(tickets[i]) + std::get<2>(tickets[j]) + std::get<2>(tickets[k]);
-        if (travel_time >= summed_time && summed_cost < smallest_cost) {
+        if (travel_time <= summed_time && summed_cost < smallest_cost) {
           best_tickets.clear();
           best_tickets.push_back(std::get<0>(tickets[i]));
           best_tickets.push_back(std::get<0>(tickets[j]));
@@ -81,14 +83,6 @@ int time_of_connection(const std::unordered_map<long long, stops>& courses,
                        const travel& current_travel) {
   time_point current_time, start_point;
 
-  // sprawdzamy czy przystanki nie powtarzają się wewnątrz podróży
-  for (size_t i = 0; i < current_travel.size(); i++) {
-    for (size_t j = i + 1; j < current_travel.size(); j++)
-      if (current_travel[i].first == current_travel[j].first) {
-        throw std::invalid_argument("");
-      }
-  }
-
   for (size_t i = 0; i < current_travel.size() - 1; i++) {
     long long course_number = current_travel[i].second;
 
@@ -111,7 +105,7 @@ int time_of_connection(const std::unordered_map<long long, stops>& courses,
     time_point arrival_for_the_next_stop = current_course[next_stop_name];
 
     if (i == 0) {
-      current_time = departure_from_stop;
+      current_time = arrival_for_the_next_stop;
       start_point = departure_from_stop;
     } else {
       if (current_time == departure_from_stop) {
@@ -232,7 +226,8 @@ travel parse_travel_query(const std::smatch& sm) {
 }
 
 bool try_perform_query(const std::vector<single_ticket>& tickets,
-                       const std::unordered_map<long long, stops>& courses, const std::smatch& sm, int& ticket_sum) {
+                       const std::unordered_map<long long, stops>& courses, const std::smatch& sm,
+                       int& ticket_sum) {
   travel query;
   int time;
   std::vector<std::string> solution;
