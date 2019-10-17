@@ -148,6 +148,8 @@ std::pair<long long, stops> parse_course(const std::smatch& sm) {
   string_split(sm[2].str(), v);
 
   time_point previous = opening_time;
+  // Czasu muszą być rosnące, a 5:55 musi działać
+  previous.second -= 1;
   for (int i = 0; i < (int)v.size() - 1; i += 2) {
     std::vector<std::string> time;
     string_split(v[i], time, ':');
