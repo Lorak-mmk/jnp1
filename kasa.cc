@@ -5,13 +5,13 @@
 #include <string>
 #include <unordered_map>
 
-// para reprezentujaca odpowiednio godzine i minuty
+// para reprezentujaca odpowiednio godziny i minuty
 using time_point = std::pair<int, int>;
 using stops = std::unordered_map<std::string, time_point>;
-// price of the ticket is multiplied by 100
-// (name, price, duration)
+// cena biletu jest przemnożona przez 100
+// (nazwa, cena, czas ważności)
 using single_ticket = std::tuple<std::string, long long, long long>;
-// each element contains name of the stop and number of the course
+// każdy element zawiera nazwę przystanku i numer linii
 using travel = std::vector<std::pair<std::string, long long>>;
 
 static const std::regex add_course_regex(
