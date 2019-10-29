@@ -1,8 +1,6 @@
 #ifndef POSET_H
 #define POSET_H
 
-#include <bits/stdc++.h>
-
 unsigned long poset_new(void);
 void poset_delete(unsigned long id);
 size_t poset_size(unsigned long id);

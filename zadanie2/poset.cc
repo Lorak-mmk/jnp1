@@ -1,7 +1,15 @@
 #include "poset.h"
 
-#define relationMap std::unordered_map<std::string, std::unordered_set<std::string>>
-#define relationsSet std::unordered_map<unsigned long, relationMap>
+#ifdef NDEBUG
+static const bool DEBUG_ENABLED = false;
+#else
+static const bool DEBUG_ENABLED = true;
+#endif
+
+#define DEBUG(fmt, ...) do { if (DEBUG_ENABLED) fprintf(stderr, fmt, __VA_ARGS__); } while (0)
+
+using relationMap = std::unordered_map<std::string, std::unordered_set<std::string>>;
+using relationsSet = std::unordered_map<unsigned long, relationMap>;
 
 /**
  * W unordered_set<std::string> trzymamy klucze większe od danego
