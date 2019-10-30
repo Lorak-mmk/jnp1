@@ -197,24 +197,25 @@ bool poset_del(unsigned long id, char const *value1, char const *value2) {
 }
 
 bool poset_test(unsigned long id, char const *value1, char const *value2) {
-  std::string val1 = std::string(value1);
-  std::string val2 = std::string(value2);
-
-  auto checkId = biggerThan.find(id);
-
-  if (checkId != biggerThan.end()) {
-    auto checkVal1 = (*checkId).second.find(val1);
-    auto checkVal2 = (*checkId).second.find(val2);
-
-    if (checkVal1 != (*checkId).second.end() && checkVal2 != (*checkId).second.end()) {
-      if (strcmp(val1.c_str(), val2.c_str()) == 0)
-        return true;
-      else
-        return (*checkVal1).second.find(val2) != (*checkVal1).second.end();
-    }
-
-  } else
+  poset_t* poset;
+  try {
+    poset = posets.at(id);
+  } catch (const std::out_of_range &e) {
     return false;
+  }
+  std::string_view s1 = std::string_view(value1);
+  std::string_view s2 = std::string_view(value2);
+
+  auto elem1 = poset->find(s1);
+  auto elem2 = poset->find(s2);
+
+  if(elem1 == poset->end() || elem2 == poset->end()){
+    return false;
+  }
+
+  if (elem1 == elem2) return true;
+
+  return elem1.second->find(elem2.second) != elem1.second->end()
 }
 
 void poset_clear(unsigned long id) {
