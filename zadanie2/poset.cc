@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <deque>
-#include <cstring>
+#include <string.h>
 
 #include "poset.h"
 
@@ -91,18 +91,13 @@ bool jnp1::poset_insert(unsigned long id, char const *value) {
     return false;
   }
 
-  char* d = new char[strlen(value) + 1];
-  strcpy(d, value);
-
-  std::string_view s1 = std::string_view(d);
+  std::string_view s1 = std::string_view(value);
   if(poset->find(s1) != poset->end()){
-    DEBUG("%s: invalid value (%s)\n", __func__, d);
+    DEBUG("%s: invalid value (%s)\n", __func__, value);
     return false;
   }
 
-  // TODO zamiana strcpy(?)
-  char* data = new char[strlen(value) + 1];
-  strcpy(data, value);
+  char* data = strdup(value);
   s1 = std::string_view(data);
 
   element_id_t newId = get_new_id(element_counter);
@@ -114,6 +109,23 @@ bool jnp1::poset_insert(unsigned long id, char const *value) {
 }
 
 bool jnp1::poset_remove(unsigned long id, char const *value) {
+  DEBUG("%s(%lu, \"%s\")\n", __func__, id, value);
+
+  if (value == nullptr) {
+    DEBUG("%s: invalid value (NULL)\n", __func__);
+    return false;
+  }
+
+  poset_t* poset;
+  try {
+    poset = posets.at(id);
+  } catch (const std::out_of_range &e) {
+    DEBUG("%s: invalid id (%lu)\n", __func__, id);
+    return false;
+  }
+
+
+
   /*
   std::string val = std::string(value);
   auto checkId = biggerThan.find(id);
@@ -244,13 +256,8 @@ bool jnp1::poset_test(unsigned long id, char const *value1, char const *value2) 
     return false;
   }
 
-  // TODO zamiana kopiowania (?)
-  char* d1 = new char[strlen(value1) + 1];
-  strcpy(d1, value1);
-  char* d2 = new char[strlen(value2) + 1];
-  strcpy(d2, value2);
-  std::string_view s1 = std::string_view(d1);
-  std::string_view s2 = std::string_view(d2);
+  std::string_view s1 = std::string_view(value1);
+  std::string_view s2 = std::string_view(value2);
 
   auto elem1 = poset->find(s1);
   auto elem2 = poset->find(s2);
@@ -267,7 +274,7 @@ bool jnp1::poset_test(unsigned long id, char const *value1, char const *value2) 
 
   poset_element_t* base = elements.at(elem1->second);
 
-  if (base->find(elem2->second) == base->end()) {
+  if (base->find(elem2->second) != base->end()) {
     DEBUG("%s: poset %lu, relation (\"%s\", \"%s\") exists\n", __func__, id, d1, d2);
     return true;
   } else {
@@ -275,7 +282,7 @@ bool jnp1::poset_test(unsigned long id, char const *value1, char const *value2) 
     return false;
   }
 
-  return base->find(elem2->second) == base->end();
+  return base->find(elem2->second) != base->end();
 }
 
 void jnp1::poset_clear(unsigned long id) {
