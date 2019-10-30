@@ -47,9 +47,11 @@ void free_id(id_counter_t<T>& counter, T id) { std::get<0>(counter).emplace_back
 void clear_poset(poset_t *poset) {}
 
 unsigned long jnp1::poset_new(void) {
+  DEBUG("%s()\n", __func__);
   unsigned long newId = get_new_id(poset_counter);
   posets.emplace(newId, new poset_t());
 
+  DEBUG("%s: poset %lu created\n", __func__, newId);
   return newId;
 }
 
@@ -74,27 +76,40 @@ size_t jnp1::poset_size(unsigned long id) {
 }
 
 bool jnp1::poset_insert(unsigned long id, char const *value) {
+  DEBUG("%s(%lu, \"%s\")\n", __func__, id, value);
+
+  if (value == nullptr) {
+    DEBUG("%s: invalid value (NULL)\n", __func__);
+    return false;
+  }
+
   poset_t* poset;
   try {
     poset = posets.at(id);
   } catch (const std::out_of_range &e) {
+    DEBUG("%s: invalid id (%lu)\n", __func__, id);
     return false;
   }
 
-  std::string_view s1 = std::string_view(value);
+  char* d = new char[strlen(value) + 1];
+  strcpy(d, value);
+
+  std::string_view s1 = std::string_view(d);
   if(poset->find(s1) != poset->end()){
+    DEBUG("%s: invalid value (%s)\n", __func__, d);
     return false;
   }
 
-  //char* data = new char[strlen(value) + 1];
-  //strcpy(data, value);
-  std::string data = std::string(value);
+  // TODO zamiana strcpy(?)
+  char* data = new char[strlen(value) + 1];
+  strcpy(data, value);
   s1 = std::string_view(data);
 
   element_id_t newId = get_new_id(element_counter);
   (*poset)[s1] = newId;
   elements[newId] = new poset_element_t();
 
+  DEBUG("%s: poset %lu, element \"%s\" inserted\n", __func__, id, data);
   return true;
 }
 
@@ -220,33 +235,57 @@ bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
 }
 
 bool jnp1::poset_test(unsigned long id, char const *value1, char const *value2) {
+  DEBUG("%s(%lu, \"%s\", \"%s\")\n", __func__, id, value1, value2);
   poset_t* poset;
   try {
     poset = posets.at(id);
   } catch (const std::out_of_range &e) {
+    DEBUG("%s: poset %lu does not exist\n", __func__, id);
     return false;
   }
-  std::string_view s1 = std::string_view(value1);
-  std::string_view s2 = std::string_view(value2);
+
+  // TODO zamiana kopiowania (?)
+  char* d1 = new char[strlen(value1) + 1];
+  strcpy(d1, value1);
+  char* d2 = new char[strlen(value2) + 1];
+  strcpy(d2, value2);
+  std::string_view s1 = std::string_view(d1);
+  std::string_view s2 = std::string_view(d2);
 
   auto elem1 = poset->find(s1);
   auto elem2 = poset->find(s2);
 
-  if(elem1 == poset->end() || elem2 == poset->end()){
+  if (elem1 == poset->end() || elem2 == poset->end()) {
+    DEBUG("%s: element \"%s\" or \"%s\" does not exist\n", __func__, d1, d2);
     return false;
   }
 
-  if (elem1->second == elem2->second) return true;
+  if (elem1->second == elem2->second) {
+    DEBUG("%s: poset %lu, relation (\"%s\", \"%s\") exists\n", __func__, id, d1, d2);
+    return true;
+  }
 
   poset_element_t* base = elements.at(elem1->second);
+
+  if (base->find(elem2->second) == base->end()) {
+    DEBUG("%s: poset %lu, relation (\"%s\", \"%s\") exists\n", __func__, id, d1, d2);
+    return true;
+  } else {
+    DEBUG("%s: poset %lu, relation (\"%s\", \"%s\") does not exist\n", __func__, id, d1, d2);
+    return false;
+  }
+
   return base->find(elem2->second) == base->end();
 }
 
 void jnp1::poset_clear(unsigned long id) {
+  DEBUG("%s(%lu)\n", __func__, id);
   try {
     poset_t *poset = posets.at(id);
     clear_poset(poset);
+    DEBUG("%s: poset %lu cleared\n", __func__, id);
   } catch (const std::out_of_range &e) {
+    DEBUG("%s: poset %lu does not exist\n", __func__, id);
     return;
   }
 }
