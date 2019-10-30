@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -o xtrace
+set -e
 
 mkdir -p build
 

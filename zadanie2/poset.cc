@@ -1,6 +1,8 @@
 #include <string_view>
-#include <unorderd_map>
+#include <unordered_map>
 #include <unordered_set>
+#include <deque>
+#include <cstring>
 
 #include "poset.h"
 
@@ -15,29 +17,37 @@ static const bool DEBUG_ENABLED = true;
     if (DEBUG_ENABLED) fprintf(stderr, fmt, __VA_ARGS__); \
   } while (0)
 
-using poset_element_t = std::unordered_set<poset_element *>;
-using poset_t = std::unordered_map<std::string_view, poset_element *>;
+using element_id_t = int64_t;
+using poset_element_t = std::unordered_set<element_id_t>;
+using poset_t = std::unordered_map<std::string_view, element_id_t>;
+template <typename T> using id_counter_t = std::tuple<std::deque<T>, T>;
 
-std::unordered_map<unsigned_long, poset *> posets;
-std::deque<unsigned long> releasedIds;
-unsigned long lastId = 0;
+std::unordered_map<unsigned long, poset_t *> posets;
+std::unordered_map<element_id_t, poset_element_t*> elements;
 
-unsigned log get_new_id() {
-  if (releasedIds.empty()) {
-    return lastId++;
+id_counter_t<unsigned long> poset_counter;
+id_counter_t<element_id_t> element_counter;
+
+template <typename T>
+T get_new_id(id_counter_t<T>& counter) {
+  std::deque<T>& que = std::get<0>(counter);
+  T& ctr = std::get<1>(counter);
+  if (que.empty()) {
+    return ctr++;
   } else {
-    unsigned long newId = releasedIds.front();
-    releasedIds.pop_front();
+    unsigned long newId = que.front();
+    que.pop_front();
     return newId;
   }
 }
 
-void free_id(unsigned long id) { releasedIds.emplace_back(id); }
+template<typename T>
+void free_id(id_counter_t<T>& counter, T id) { std::get<0>(counter).emplace_back(id); }
 
 void clear_poset(poset_t *poset) {}
 
 unsigned long poset_new(void) {
-  unsigned long newId = get_new_id();
+  unsigned long newId = get_new_id(poset_counter);
   posets.emplace(newId, new poset_t());
 
   return newId;
@@ -48,7 +58,7 @@ void poset_delete(unsigned long id) {
     poset_t *poset = posets.at(id);
     clear_poset(poset);
     posets.erase(id);
-    free_id(id);
+    free_id(poset_counter, id);
   } catch (const std::out_of_range &e) {
     return;
   }
@@ -64,24 +74,31 @@ size_t poset_size(unsigned long id) {
 }
 
 bool poset_insert(unsigned long id, char const *value) {
-  std::string val = std::string(value);
-  auto checkId = biggerThan.find(id);
-  if (checkId != biggerThan.end()) {
-    auto checkElement = (*checkId).second.find(val);
-    if (checkElement == (*checkId).second.end()) {
-      (*checkId).second.emplace(val, std::unordered_set<std::string>());
-      checkId = smallerThan.find(id);
-      (*checkId).second.emplace(val, std::unordered_set<std::string>());
-      return true;
-
-    } else
-      return false;
-
-  } else
+  poset_t* poset;
+  try {
+    poset = posets.at(id);
+  } catch (const std::out_of_range &e) {
     return false;
+  }
+
+  std::string_view s1 = std::string_view(value);
+  if(poset->find(s1) != poset->end()){
+    return false;
+  }
+
+  char* data = new char[strlen(value) + 1];
+  strcpy(data, value);
+  s1 = std::string_view(data);
+
+  element_id_t newId = get_new_id(element_counter);
+  (*poset)[s1] = newId;
+  elements[newId] = new poset_element_t();
+
+  return true;
 }
 
 bool poset_remove(unsigned long id, char const *value) {
+  /*
   std::string val = std::string(value);
   auto checkId = biggerThan.find(id);
   if (checkId != biggerThan.end()) {
@@ -113,9 +130,11 @@ bool poset_remove(unsigned long id, char const *value) {
 
   } else
     return false;
+  */
 }
 
 bool poset_add(unsigned long id, char const *value1, char const *value2) {
+  /*
   std::string val1 = std::string(value1);
   std::string val2 = std::string(value2);
 
@@ -154,9 +173,11 @@ bool poset_add(unsigned long id, char const *value1, char const *value2) {
       return false;
   } else
     return false;
+  */
 }
 
 bool poset_del(unsigned long id, char const *value1, char const *value2) {
+  /*
   std::string val1 = std::string(value1);
   std::string val2 = std::string(value2);
 
@@ -194,6 +215,7 @@ bool poset_del(unsigned long id, char const *value1, char const *value2) {
       return false;
   } else
     return false;
+  */
 }
 
 bool poset_test(unsigned long id, char const *value1, char const *value2) {
@@ -213,9 +235,10 @@ bool poset_test(unsigned long id, char const *value1, char const *value2) {
     return false;
   }
 
-  if (elem1 == elem2) return true;
+  if (elem1->second == elem2->second) return true;
 
-  return elem1.second->find(elem2.second) != elem1.second->end()
+  poset_element_t* base = elements.at(elem1->second);
+  return base->find(elem2->second) == base->end();
 }
 
 void poset_clear(unsigned long id) {
