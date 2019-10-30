@@ -46,14 +46,14 @@ void free_id(id_counter_t<T>& counter, T id) { std::get<0>(counter).emplace_back
 
 void clear_poset(poset_t *poset) {}
 
-unsigned long poset_new(void) {
+unsigned long jnp1::poset_new(void) {
   unsigned long newId = get_new_id(poset_counter);
   posets.emplace(newId, new poset_t());
 
   return newId;
 }
 
-void poset_delete(unsigned long id) {
+void jnp1::poset_delete(unsigned long id) {
   try {
     poset_t *poset = posets.at(id);
     clear_poset(poset);
@@ -64,7 +64,7 @@ void poset_delete(unsigned long id) {
   }
 }
 
-size_t poset_size(unsigned long id) {
+size_t jnp1::poset_size(unsigned long id) {
   try {
     poset_t *poset = posets.at(id);
     return poset->size();
@@ -73,7 +73,7 @@ size_t poset_size(unsigned long id) {
   }
 }
 
-bool poset_insert(unsigned long id, char const *value) {
+bool jnp1::poset_insert(unsigned long id, char const *value) {
   poset_t* poset;
   try {
     poset = posets.at(id);
@@ -86,8 +86,9 @@ bool poset_insert(unsigned long id, char const *value) {
     return false;
   }
 
-  char* data = new char[strlen(value) + 1];
-  strcpy(data, value);
+  //char* data = new char[strlen(value) + 1];
+  //strcpy(data, value);
+  std::string data = std::string(value);
   s1 = std::string_view(data);
 
   element_id_t newId = get_new_id(element_counter);
@@ -97,7 +98,7 @@ bool poset_insert(unsigned long id, char const *value) {
   return true;
 }
 
-bool poset_remove(unsigned long id, char const *value) {
+bool jnp1::poset_remove(unsigned long id, char const *value) {
   /*
   std::string val = std::string(value);
   auto checkId = biggerThan.find(id);
@@ -133,7 +134,7 @@ bool poset_remove(unsigned long id, char const *value) {
   */
 }
 
-bool poset_add(unsigned long id, char const *value1, char const *value2) {
+bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
   /*
   std::string val1 = std::string(value1);
   std::string val2 = std::string(value2);
@@ -176,7 +177,7 @@ bool poset_add(unsigned long id, char const *value1, char const *value2) {
   */
 }
 
-bool poset_del(unsigned long id, char const *value1, char const *value2) {
+bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
   /*
   std::string val1 = std::string(value1);
   std::string val2 = std::string(value2);
@@ -218,7 +219,7 @@ bool poset_del(unsigned long id, char const *value1, char const *value2) {
   */
 }
 
-bool poset_test(unsigned long id, char const *value1, char const *value2) {
+bool jnp1::poset_test(unsigned long id, char const *value1, char const *value2) {
   poset_t* poset;
   try {
     poset = posets.at(id);
@@ -241,7 +242,7 @@ bool poset_test(unsigned long id, char const *value1, char const *value2) {
   return base->find(elem2->second) == base->end();
 }
 
-void poset_clear(unsigned long id) {
+void jnp1::poset_clear(unsigned long id) {
   try {
     poset_t *poset = posets.at(id);
     clear_poset(poset);
