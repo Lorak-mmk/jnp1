@@ -7,15 +7,14 @@
 #include "poset.h"
 
 #ifdef NDEBUG
-static const bool DEBUG_ENABLED = false;
+static const bool DEBUG_DISABLED = true;
 #else
-static const bool DEBUG_ENABLED = true;
+static const bool DEBUG_DISABLED = false;
 #endif
 
-#define DEBUG(fmt, ...)                                   \
-  do {                                                    \
-    if (DEBUG_ENABLED) fprintf(stderr, fmt, __VA_ARGS__); \
-  } while (0)
+#define DEBUG \
+    if (DEBUG_DISABLED) {} \
+    else std::cerr
 
 using element_id_t = int64_t;
 // std::tuple<smaller elements, bigger elements>
