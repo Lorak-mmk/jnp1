@@ -70,11 +70,19 @@ namespace {
     return std::get<1>(*base).find(id2) != std::get<1>(*base).end();
   }
   
-  void poset_add_and_extend_relation(poset_t* poset, element_id_t id1, element_id_t id2) {
+  template<typename T>
+  std::unordered_set<T> get_set_diff(const unordered_set<T>& main, const unordered_set<T>& to_remove) {
+    std::unordered_set<T> result;
     
+    for(const auto& elem : main) {
+      if(to_remove.count(elem) == 0){
+        result.insert(elem);
+      }
+    }
+    
+    return result;
   }
 }
-
 
 unsigned long jnp1::poset_new(void) {
   //DEBUG("%s()\n", __func__);
@@ -207,9 +215,22 @@ bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
     return false;
   }
   
-  // TODO:
+  poset_element_t* p_elem1 = elements[elem1->second];
+  poset_element_t* p_elem2 = elements[elem2->second];
+  
+  std::unordered_set<element_id_t> to_insert_bigger = get_set_diff(std::get<1>(*p_elem2), std::get<1>(*p_elem1));  
+  std::get<1>(*p_elem1).insert(to_insert_bigger.begin(), to_insert_bigger.end());
+  for(const auto& elem : std::get<0>(*p_elem1)){
+    std::get<1>(*elements[elem]).insert(to_insert_bigger.begin(), to_insert_bigger.end());
+  }
+  
+  std::unordered_set<element_id_t> to_insert_smaller = get_set_diff(std::get<0>(*p_elem1), std::get<0>(*p_elem2));
+  std::get<0>(*p_elem2).insert(to_insert_smaller.begin(), to_insert_smaller.end());
+  for(const auto& elem : std::get<1>(*p_elem2)){
+    std::get<0>(*elements[elem]).insert(to_insert_smaller.begin(), to_insert_smaller.end());
+  }
+  
   return true;
-
 }
 
 bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
