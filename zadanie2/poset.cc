@@ -102,7 +102,7 @@ namespace {
     return result;
   }
   
-  std::string str(const char* data) {
+  const char* str(const char* data) {
     if(data == nullptr){
       return "NULL";
     }
@@ -222,8 +222,8 @@ bool jnp1::poset_remove(unsigned long id, char const *value) {
 bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
   DEBUG << __func__ << "(" << id << ", \"" << str(value1) << "\", \"" << str(value2) << "\")" << std::endl; 
   if (value1 == nullptr || value2 == nullptr){
-    if(value1 == nullptr){ DEBUG << __func__ << ": invalid value1 (NULL)" << std::endl; }
-    if(value2 == nullptr){ DEBUG << __func__ << ": invalid value2 (NULL)" << std::endl; }
+    if(value1 == nullptr) { DEBUG << __func__ << ": invalid value1 (NULL)" << std::endl; }
+    if(value2 == nullptr) { DEBUG << __func__ << ": invalid value2 (NULL)" << std::endl; }
     return false;
   }
 
@@ -275,8 +275,8 @@ bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
 bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
   DEBUG << __func__ << "(" << id << ", \"" << str(value1) << "\", \"" << str(value2) << "\")" << std::endl; 
   if (value1 == nullptr || value2 == nullptr){
-    if(value1 == nullptr){ DEBUG << __func__ << ": invalid value1 (NULL)" << std::endl; }
-    if(value2 == nullptr){ DEBUG << __func__ << ": invalid value2 (NULL)" << std::endl; }
+    if(value1 == nullptr) { DEBUG << __func__ << ": invalid value1 (NULL)" << std::endl; }
+    if(value2 == nullptr) { DEBUG << __func__ << ": invalid value2 (NULL)" << std::endl; }
     return false;
   }
 
@@ -322,8 +322,8 @@ bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
 bool jnp1::poset_test(unsigned long id, char const *value1, char const *value2) {
   DEBUG << __func__ << "(" << id << ", \"" << str(value1) << "\", \"" << str(value2) << "\")" << std::endl; 
   if (value1 == nullptr || value2 == nullptr){
-    if(value1 == nullptr){ DEBUG << __func__ << ": invalid value1 (NULL)" << std::endl; }
-    if(value2 == nullptr){ DEBUG << __func__ << ": invalid value2 (NULL)" << std::endl; }
+    if(value1 == nullptr) { DEBUG << __func__ << ": invalid value1 (NULL)" << std::endl; }
+    if(value2 == nullptr) { DEBUG << __func__ << ": invalid value2 (NULL)" << std::endl; }
     return false;
   }
   
