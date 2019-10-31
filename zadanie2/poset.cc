@@ -42,11 +42,11 @@ namespace {
   };
 
   id_counter_t<unsigned long>& poset_counter() {
-    id_counter_t<unsigned long>* val = new id_counter_t<unsigned long>();
+    static id_counter_t<unsigned long>* val = new id_counter_t<unsigned long>();
     return *val;
   }
   id_counter_t<element_id_t>& element_counter() {
-    id_counter_t<element_id_t>* val = new id_counter_t<element_id_t>();
+    static id_counter_t<element_id_t>* val = new id_counter_t<element_id_t>();
     return *val;    
   }
 
