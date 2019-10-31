@@ -278,6 +278,8 @@ bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
   for(const auto& elem : std::get<1>(*p_elem2)){
     std::get<0>(*elements()[elem]).insert(to_insert_smaller.begin(), to_insert_smaller.end());
   }
+
+  DEBUG << __func__ << ": poset " << id << ", relation (\"" << s1.data() << "\", \"" << s2.data() << "\") added" << std::endl;
   
   return true;
 }
