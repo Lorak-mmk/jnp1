@@ -135,12 +135,12 @@ size_t jnp1::poset_size(unsigned long id) {
 bool jnp1::poset_insert(unsigned long id, char const *value) {
 
   if (value == nullptr) {
-    DEBUG << __func__ << "(" << id << "\"NULL\")" << std::endl;
+    DEBUG << __func__ << "(" << id << ", \"NULL\")" << std::endl;
     DEBUG << __func__ << ": invalid value (NULL)" << std::endl;
     return false;
   }
 
-  DEBUG << __func__ << "(" << id << "\"" << value <<  "\")" << std::endl;
+  DEBUG << __func__ << "(" << id << ", \"" << value <<  "\")" << std::endl;
 
   poset_t *poset;
   try {
