@@ -107,7 +107,7 @@ namespace {
       return "NULL";
     }
     
-    return std::string(data);
+    return data;
   }
 }
 
