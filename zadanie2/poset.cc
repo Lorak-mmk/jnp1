@@ -102,12 +102,12 @@ namespace {
     return result;
   }
   
-  char* str(const char* data) {
+  std::string str(const char* data) {
     if(data == nullptr){
-      return "NULL"
+      return "NULL";
     }
     
-    return data;
+    return std::string(data);
   }
 }
 
@@ -162,7 +162,7 @@ bool jnp1::poset_insert(unsigned long id, char const *value) {
 
   std::string_view s = std::string_view(value);
   if (poset->find(s) != poset->end()) {
-    DEBUG << __func__ << ": poset " << id << " element \"" << s.data() << "\" already exists" << std::endl;
+    DEBUG << __func__ << ": poset " << id << ", element \"" << s.data() << "\" already exists" << std::endl;
     return false;
   }
 
@@ -222,8 +222,8 @@ bool jnp1::poset_remove(unsigned long id, char const *value) {
 bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
   DEBUG << __func__ << "(" << id << ", \"" << str(value1) << "\", \"" << str(value2) << "\")" << std::endl; 
   if (value1 == nullptr || value2 == nullptr){
-    if(value1 == nullptr) DEBUG << __func__ << ": invalid value1 (NULL)" << std::endl;
-    if(value2 == nullptr) DEBUG << __func__ << ": invalid value2 (NULL)" << std::endl;
+    if(value1 == nullptr){ DEBUG << __func__ << ": invalid value1 (NULL)" << std::endl; }
+    if(value2 == nullptr){ DEBUG << __func__ << ": invalid value2 (NULL)" << std::endl; }
     return false;
   }
 
@@ -240,19 +240,13 @@ bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
   auto elem1 = poset->find(s1);
   auto elem2 = poset->find(s2);
   
-  if (elem1 == poset->end()) {
-    DEBUG << __func__ << ": poset " << id << ", element " << s1.data() << " does not exist" << std::endl;
-    return false;
-  } else if (elem2 == poset->end()) {
-    DEBUG << __func__ << ": poset " << id << ", element " << s2.data() << " does not exist" << std::endl;
+  if (elem1 == poset->end() || elem2 == poset->end()) {
+    DEBUG << __func__ << ": poset " << id << ", element \"" << s1.data() << "\" or \"" << s2.data() << "\" does not exist" << std::endl;
     return false;
   }
   
-  if (poset_test_relation(elem1->second, elem2->second)){
-    DEBUG << __func__ << ": poset " << id << ", relation (\"" << s1.data() << "\", \"" << s2.data() << "\") exists" << std::endl;
-    return false;
-  } else if (poset_test_relation(elem2->second, elem1->second)){
-    DEBUG << __func__ << ": poset " << id << ", relation (\"" << s2.data() << "\", \"" << s1.data() << "\") exists" << std::endl;
+  if (poset_test_relation(elem1->second, elem2->second) || poset_test_relation(elem2->second, elem1->second)){
+    DEBUG << __func__ << ": poset " << id << ", relation (\"" << s1.data() << "\", \"" << s2.data() << "\") cannot be added" << std::endl;
     return false;
   }
   
@@ -281,8 +275,8 @@ bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
 bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
   DEBUG << __func__ << "(" << id << ", \"" << str(value1) << "\", \"" << str(value2) << "\")" << std::endl; 
   if (value1 == nullptr || value2 == nullptr){
-    if(value1 == nullptr) DEBUG << __func__ << ": invalid value1 (NULL)" << std::endl;
-    if(value2 == nullptr) DEBUG << __func__ << ": invalid value2 (NULL)" << std::endl;
+    if(value1 == nullptr){ DEBUG << __func__ << ": invalid value1 (NULL)" << std::endl; }
+    if(value2 == nullptr){ DEBUG << __func__ << ": invalid value2 (NULL)" << std::endl; }
     return false;
   }
 
@@ -299,31 +293,27 @@ bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
   auto elem1 = poset->find(s1);
   auto elem2 = poset->find(s2);
   
-  if(elem1 == poset->end()) {
-    DEBUG << __func__ << ": poset " << id << ", element " << s1.data() << " does not exist" << std::endl;
-    return false;
-  } else if (elem2 == poset->end()){
-    DEBUG << __func__ << ": poset " << id << ", element " << s2.data() << " does not exist" << std::endl;
+  if(elem1 == poset->end() || elem2 == poset->end()) {
+    DEBUG << __func__ << ": poset " << id << ", element \"" << s1.data() << "\" or \"" << s2.data() << "\" does not exist" << std::endl;
     return false;
   }
   
-  if(!poset_test_relation(elem1->second, elem2->second)){
-    DEBUG << __func__ << ": relation (\"" << s1.data() << "\", \"" << s2.data() << "\") does not exist" << std::endl;
-    return false;
-  } else if (elem1->second == elem2->second){
-    DEBUG << __func__ << ": relation (\"" << s1.data() << "\", \"" << s2.data() << "\") is needed - poset must be reflexive" << std::endl;
+  if(!poset_test_relation(elem1->second, elem2->second) || (elem1->second == elem2->second)){
+    DEBUG << __func__ << ": poset " << id << ", relation (\"" << s1.data() << "\", \"" << s2.data() << "\") cannot be deleted" << std::endl;
     return false;
   }
   
   for(const auto& elem : std::get<1>(*elements()[elem1->second])) {
     if(std::get<1>(*elements()[elem]).count(elem2->second)) {
-      DEBUG << __func__ << ": ??? PLACEHOLDER ???" << std::endl;
+      DEBUG << __func__ << ": poset " << id << ", relation (\"" << s1.data() << "\", \"" << s2.data() << "\") cannot be deleted" << std::endl;
       return false;
     }
   }
   
   std::get<1>(*elements()[elem1->second]).erase(elem2->second);
   std::get<0>(*elements()[elem2->second]).erase(elem1->second);
+
+  DEBUG << __func__ << ": poset " << id << ", relation (\"" << s1.data() << "\", \"" << s2.data() << "\") deleted" << std::endl;
   
   return true;
 
@@ -332,8 +322,8 @@ bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
 bool jnp1::poset_test(unsigned long id, char const *value1, char const *value2) {
   DEBUG << __func__ << "(" << id << ", \"" << str(value1) << "\", \"" << str(value2) << "\")" << std::endl; 
   if (value1 == nullptr || value2 == nullptr){
-    if(value1 == nullptr) DEBUG << __func__ << ": invalid value1 (NULL)" << std::endl;
-    if(value2 == nullptr) DEBUG << __func__ << ": invalid value2 (NULL)" << std::endl;
+    if(value1 == nullptr){ DEBUG << __func__ << ": invalid value1 (NULL)" << std::endl; }
+    if(value2 == nullptr){ DEBUG << __func__ << ": invalid value2 (NULL)" << std::endl; }
     return false;
   }
   
@@ -351,7 +341,7 @@ bool jnp1::poset_test(unsigned long id, char const *value1, char const *value2) 
   auto elem2 = poset->find(s2);
 
   if (elem1 == poset->end() || elem2 == poset->end()) {
-    DEBUG << __func__ << ": poset " << id << ", element \"" << s1.data() << "\" or \"" << s2.data() << " does not exist" << std::endl;
+    DEBUG << __func__ << ": poset " << id << ", element \"" << s1.data() << "\" or \"" << s2.data() << "\" does not exist" << std::endl;
     return false;
   }
 
