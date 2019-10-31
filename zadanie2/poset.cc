@@ -241,7 +241,7 @@ bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
   auto elem1 = poset->find(s1);
   auto elem2 = poset->find(s2);
   
-  if (elem1 == poset->end() || elem2 == poset->end()) {
+  if (elem1 == poset->end()) {
     DEBUG << __func__ << ": poset " << id << ", element " << s1.data() << " does not exist" << std::endl;
     return false;
   } else if (elem2 == poset->end()) {
