@@ -31,24 +31,20 @@ using id_counter_t = std::tuple<std::queue<T>, T>;
 
 // Local helper functions.
 namespace {
-  
-  std::unordered_map<unsigned long, poset_t *>& posets() {
-    static std::unordered_map<unsigned long, poset_t *>* val = new std::unordered_map<unsigned long, poset_t *>();
+  // Wrapper for creating functions allowing to fix static order initialization.
+  // Won't work if 2 global vars have same type, so don't use it like that.
+  // You can work around it, by adding second template argument unsigned int N
+  // and passing to it from example __COUNTER__ macro or some other unique identifier
+  template<typename T>
+  T& global_var() {
+    static T* val = new T();
     return *val;
   }
-  std::unordered_map<element_id_t, poset_element_t *>& elements() {
-    static std::unordered_map<element_id_t, poset_element_t *>* val = new std::unordered_map<element_id_t, poset_element_t *>();
-    return *val;
-  };
 
-  id_counter_t<unsigned long>& poset_counter() {
-    static id_counter_t<unsigned long>* val = new id_counter_t<unsigned long>();
-    return *val;
-  }
-  id_counter_t<element_id_t>& element_counter() {
-    static id_counter_t<element_id_t>* val = new id_counter_t<element_id_t>();
-    return *val;    
-  }
+  auto posets = global_var<std::unordered_map<unsigned long, poset_t *>>;
+  auto elements = global_var<std::unordered_map<element_id_t, poset_element_t *>>;
+  auto poset_counter = global_var<id_counter_t<unsigned long>>;
+  auto element_counter = global_var<id_counter_t<element_id_t>>;
   
   inline void assert_stream_init() {
     static std::ios_base::Init* INIT = new std::ios_base::Init();
