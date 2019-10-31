@@ -61,6 +61,13 @@ void clear_poset(poset_t *poset) {
   poset->clear();
 }
 
+bool test_elems(element_id_t id1, element_id_t id2) {
+  if(id1 == id2) return true;
+  
+  poset_element_t *base = elements.at(id1);
+  return std::get<1>(*base).find(id2) != std::get<1>(*base).end();
+}
+
 unsigned long jnp1::poset_new(void) {
   DEBUG("%s()\n", __func__);
   unsigned long newId = get_new_id(poset_counter);
@@ -164,6 +171,36 @@ bool jnp1::poset_remove(unsigned long id, char const *value) {
 }
 
 bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
+  DEBUG("%s(%lu, \"%s\", \"%s\")\n", __func__, id, value1, value2);
+
+  if (value1 == nullptr || value2 == nullptr) {
+    DEBUG("%s: invalid value (NULL)\n", __func__);
+    return false;
+  }
+
+  poset_t *poset;
+  try {
+    poset = posets.at(id);
+  } catch (const std::out_of_range &e) {
+    DEBUG("%s: invalid id (%lu)\n", __func__, id);
+    return false;
+  }
+  
+  std::string_view s1 = std::string_view(value1);
+  std::string_view s2 = std::string_view(value2);
+  auto elem1 = poset->find(s1);
+  auto elem2 = poset->find(s2);
+  
+  if(elem1 == poset->end() || elem2 == poset->end()) {
+    return false;
+  }
+  
+  if(test_elems(elem1->second, elem2->second) || test_elems(elem2->second, elem1->second)){
+    return false;
+  }
+  
+  // TODO:
+  return true;
   /*
   std::string val1 = std::string(value1);
   std::string val2 = std::string(value2);
@@ -207,6 +244,36 @@ bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
 }
 
 bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
+  DEBUG("%s(%lu, \"%s\", \"%s\")\n", __func__, id, value1, value2);
+
+  if (value1 == nullptr || value2 == nullptr) {
+    DEBUG("%s: invalid value (NULL)\n", __func__);
+    return false;
+  }
+
+  poset_t *poset;
+  try {
+    poset = posets.at(id);
+  } catch (const std::out_of_range &e) {
+    DEBUG("%s: invalid id (%lu)\n", __func__, id);
+    return false;
+  }
+  
+  std::string_view s1 = std::string_view(value1);
+  std::string_view s2 = std::string_view(value2);
+  auto elem1 = poset->find(s1);
+  auto elem2 = poset->find(s2);
+  
+  if(elem1 == poset->end() || elem2 == poset->end()) {
+    return false;
+  }
+  
+  if(!test_elems(elem1->second, elem2->second)){
+    return false;
+  }
+  
+  // TODO:
+  return true;
   /*
   std::string val1 = std::string(value1);
   std::string val2 = std::string(value2);
@@ -260,7 +327,6 @@ bool jnp1::poset_test(unsigned long id, char const *value1, char const *value2) 
 
   std::string_view s1 = std::string_view(value1);
   std::string_view s2 = std::string_view(value2);
-
   auto elem1 = poset->find(s1);
   auto elem2 = poset->find(s2);
 
@@ -274,9 +340,7 @@ bool jnp1::poset_test(unsigned long id, char const *value1, char const *value2) 
     return true;
   }
 
-  poset_element_t *base = elements.at(elem1->second);
-
-  if (std::get<1>(*base).find(elem2->second) != std::get<1>(*base).end()) {
+  if (test_elems(elem1->second, elem2->second)) {
     DEBUG("%s: poset %lu, relation (\"%s\", \"%s\") exists\n", __func__, id, s1.data(), s2.data());
     return true;
   } else {
