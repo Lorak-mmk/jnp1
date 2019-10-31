@@ -18,9 +18,10 @@ static const bool DEBUG_DISABLED = false;
     else std::cerr
 
 using element_id_t = int64_t;
+using elements_t = std::unordered_set<element_id_t>;
 // std::tuple<smaller elements, bigger elements>
 using poset_element_t =
-    std::tuple<std::unordered_set<element_id_t>, std::unordered_set<element_id_t>>;
+    std::tuple<elements_t, elements_t>;
 // Elements of all posets are being held on one map, and have unique ids.
 // Poset just maps strings to ids of elements.
 using poset_t = std::unordered_map<std::string_view, element_id_t>;
@@ -218,13 +219,13 @@ bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
   poset_element_t* p_elem1 = elements[elem1->second];
   poset_element_t* p_elem2 = elements[elem2->second];
   
-  std::unordered_set<element_id_t> to_insert_bigger = get_set_diff<element_id_t>(std::get<1>(*p_elem2), std::get<1>(*p_elem1));  
+  elements_t to_insert_bigger = get_set_diff<element_id_t>(std::get<1>(*p_elem2), std::get<1>(*p_elem1));  
   std::get<1>(*p_elem1).insert(to_insert_bigger.begin(), to_insert_bigger.end());
   for(const auto& elem : std::get<0>(*p_elem1)){
     std::get<1>(*elements[elem]).insert(to_insert_bigger.begin(), to_insert_bigger.end());
   }
   
-  std::unordered_set<element_id_t> to_insert_smaller = get_set_diff<element_id_t>(std::get<0>(*p_elem1), std::get<0>(*p_elem2));
+  elements_t to_insert_smaller = get_set_diff<element_id_t>(std::get<0>(*p_elem1), std::get<0>(*p_elem2));
   std::get<0>(*p_elem2).insert(to_insert_smaller.begin(), to_insert_smaller.end());
   for(const auto& elem : std::get<1>(*p_elem2)){
     std::get<0>(*elements[elem]).insert(to_insert_smaller.begin(), to_insert_smaller.end());
@@ -258,11 +259,19 @@ bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
     return false;
   }
   
-  if(!poset_test_relation(elem1->second, elem2->second)){
+  if(!poset_test_relation(elem1->second, elem2->second) || elem1->second == elem2->second){
     return false;
   }
   
-  // TODO:
+  for(const auto* elem : std::get<1>(*elemets[elem1->second]) {
+    if(std::get<1>(*elements[elem]).count(elem2->second)) {
+      return false;
+    }
+  }
+  
+  std::get<1>(*elements[elem1->second]).erase(elem2->second);
+  std::get<0>(*elements[elem2->second]).erase(elem1->second);
+  
   return true;
 
 }
