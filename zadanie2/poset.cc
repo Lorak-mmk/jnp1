@@ -15,7 +15,7 @@ static const bool DEBUG_DISABLED = false;
 
 #define DEBUG \
     if (DEBUG_DISABLED) {} \
-    else std::cerr
+    else assert_stream_init(), std::cerr
 
 using element_id_t = int64_t;
 using elements_t = std::unordered_set<element_id_t>;
@@ -48,6 +48,11 @@ namespace {
   id_counter_t<element_id_t>& element_counter() {
     static id_counter_t<element_id_t>* val = new id_counter_t<element_id_t>();
     return *val;    
+  }
+  
+  inline void assert_stream_init() {
+    static std::ios_base::Init* INIT = new std::ios_base::Init();
+    (void)INIT;
   }
 
   template <typename T>
