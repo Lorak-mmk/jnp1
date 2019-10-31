@@ -31,11 +31,24 @@ using id_counter_t = std::tuple<std::queue<T>, T>;
 
 // Local helper functions.
 namespace {
-  std::unordered_map<unsigned long, poset_t *> posets;
-  std::unordered_map<element_id_t, poset_element_t *> elements;
+  
+  std::unordered_map<unsigned long, poset_t *>& posets() {
+    static std::unordered_map<unsigned long, poset_t *>* val = new std::unordered_map<unsigned long, poset_t *>();
+    return *val;
+  }
+  std::unordered_map<element_id_t, poset_element_t *>& elements() {
+    static std::unordered_map<element_id_t, poset_element_t *>* val = new std::unordered_map<element_id_t, poset_element_t *>();
+    return *val;
+  };
 
-  id_counter_t<unsigned long> poset_counter;
-  id_counter_t<element_id_t> element_counter;
+  id_counter_t<unsigned long>& poset_counter() {
+    id_counter_t<unsigned long>* val = new id_counter_t<unsigned long>();
+    return *val;
+  }
+  id_counter_t<element_id_t>& element_counter() {
+    id_counter_t<element_id_t>* val = new id_counter_t<element_id_t>();
+    return *val;    
+  }
 
   template <typename T>
   T get_new_id(id_counter_t<T> &counter) {
@@ -67,7 +80,7 @@ namespace {
   bool poset_test_relation(element_id_t id1, element_id_t id2) {
     if(id1 == id2) return true;
     
-    poset_element_t *base = elements.at(id1);
+    poset_element_t *base = elements().at(id1);
     return std::get<1>(*base).find(id2) != std::get<1>(*base).end();
   }
   
@@ -87,9 +100,9 @@ namespace {
 
 unsigned long jnp1::poset_new(void) {
   //DEBUG("%s()\n", __func__);
-  unsigned long newId = get_new_id(poset_counter);
+  unsigned long newId = get_new_id(poset_counter());
   printf("%lu\n", newId);
-  posets.emplace(newId, new poset_t());
+  posets().emplace(newId, new poset_t());
 
   //DEBUG("%s: poset %lu created\n", __func__, newId);
   return newId;
@@ -97,10 +110,10 @@ unsigned long jnp1::poset_new(void) {
 
 void jnp1::poset_delete(unsigned long id) {
   try {
-    poset_t *poset = posets.at(id);
+    poset_t *poset = posets().at(id);
     poset_clear_elements(poset);
-    posets.erase(id);
-    free_id(poset_counter, id);
+    posets().erase(id);
+    free_id(poset_counter(), id);
   } catch (const std::out_of_range &e) {
     return;
   }
@@ -108,7 +121,7 @@ void jnp1::poset_delete(unsigned long id) {
 
 size_t jnp1::poset_size(unsigned long id) {
   try {
-    poset_t *poset = posets.at(id);
+    poset_t *poset = posets().at(id);
     return poset->size();
   } catch (const std::out_of_range &e) {
     return 0;
@@ -125,7 +138,7 @@ bool jnp1::poset_insert(unsigned long id, char const *value) {
 
   poset_t *poset;
   try {
-    poset = posets.at(id);
+    poset = posets().at(id);
   } catch (const std::out_of_range &e) {
     //DEBUG("%s: invalid id (%lu)\n", __func__, id);
     return false;
@@ -140,9 +153,9 @@ bool jnp1::poset_insert(unsigned long id, char const *value) {
   char *data = strdup(value);
   s = std::string_view(data);
 
-  element_id_t newId = get_new_id(element_counter);
+  element_id_t newId = get_new_id(element_counter());
   (*poset)[s] = newId;
-  elements[newId] = new poset_element_t();
+  elements()[newId] = new poset_element_t();
 
   //DEBUG("%s: poset %lu, element \"%s\" inserted\n", __func__, id, data);
   return true;
@@ -158,7 +171,7 @@ bool jnp1::poset_remove(unsigned long id, char const *value) {
 
   poset_t *poset;
   try {
-    poset = posets.at(id);
+    poset = posets().at(id);
   } catch (const std::out_of_range &e) {
     //DEBUG("%s: invalid id (%lu)\n", __func__, id);
     return false;
@@ -171,19 +184,19 @@ bool jnp1::poset_remove(unsigned long id, char const *value) {
 
   element_id_t id_to_remove = it->second;
 
-  for (const auto &elem : std::get<0>(*elements[id_to_remove])) {
-    std::get<1>(*elements[elem]).erase(id_to_remove);
+  for (const auto &elem : std::get<0>(*elements()[id_to_remove])) {
+    std::get<1>(*elements()[elem]).erase(id_to_remove);
   }
 
-  for (const auto &elem : std::get<1>(*elements[id_to_remove])) {
-    std::get<0>(*elements[elem]).erase(id_to_remove);
+  for (const auto &elem : std::get<1>(*elements()[id_to_remove])) {
+    std::get<0>(*elements()[elem]).erase(id_to_remove);
   }
 
   delete_underlying_string(it->first);
-  free_id(element_counter, id_to_remove);
+  free_id(element_counter(), id_to_remove);
 
   poset->erase(it);
-  elements.erase(id_to_remove);
+  elements().erase(id_to_remove);
 
   return true;
 }
@@ -198,7 +211,7 @@ bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
 
   poset_t *poset;
   try {
-    poset = posets.at(id);
+    poset = posets().at(id);
   } catch (const std::out_of_range &e) {
     //DEBUG("%s: invalid id (%lu)\n", __func__, id);
     return false;
@@ -217,19 +230,19 @@ bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
     return false;
   }
   
-  poset_element_t* p_elem1 = elements[elem1->second];
-  poset_element_t* p_elem2 = elements[elem2->second];
+  poset_element_t* p_elem1 = elements()[elem1->second];
+  poset_element_t* p_elem2 = elements()[elem2->second];
   
   elements_t to_insert_bigger = get_set_diff<element_id_t>(std::get<1>(*p_elem2), std::get<1>(*p_elem1));  
   std::get<1>(*p_elem1).insert(to_insert_bigger.begin(), to_insert_bigger.end());
   for(const auto& elem : std::get<0>(*p_elem1)){
-    std::get<1>(*elements[elem]).insert(to_insert_bigger.begin(), to_insert_bigger.end());
+    std::get<1>(*elements()[elem]).insert(to_insert_bigger.begin(), to_insert_bigger.end());
   }
   
   elements_t to_insert_smaller = get_set_diff<element_id_t>(std::get<0>(*p_elem1), std::get<0>(*p_elem2));
   std::get<0>(*p_elem2).insert(to_insert_smaller.begin(), to_insert_smaller.end());
   for(const auto& elem : std::get<1>(*p_elem2)){
-    std::get<0>(*elements[elem]).insert(to_insert_smaller.begin(), to_insert_smaller.end());
+    std::get<0>(*elements()[elem]).insert(to_insert_smaller.begin(), to_insert_smaller.end());
   }
   
   return true;
@@ -245,7 +258,7 @@ bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
 
   poset_t *poset;
   try {
-    poset = posets.at(id);
+    poset = posets().at(id);
   } catch (const std::out_of_range &e) {
     //DEBUG("%s: invalid id (%lu)\n", __func__, id);
     return false;
@@ -264,14 +277,14 @@ bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
     return false;
   }
   
-  for(const auto& elem : std::get<1>(*elements[elem1->second])) {
-    if(std::get<1>(*elements[elem]).count(elem2->second)) {
+  for(const auto& elem : std::get<1>(*elements()[elem1->second])) {
+    if(std::get<1>(*elements()[elem]).count(elem2->second)) {
       return false;
     }
   }
   
-  std::get<1>(*elements[elem1->second]).erase(elem2->second);
-  std::get<0>(*elements[elem2->second]).erase(elem1->second);
+  std::get<1>(*elements()[elem1->second]).erase(elem2->second);
+  std::get<0>(*elements()[elem2->second]).erase(elem1->second);
   
   return true;
 
@@ -287,7 +300,7 @@ bool jnp1::poset_test(unsigned long id, char const *value1, char const *value2) 
   
   poset_t *poset;
   try {
-    poset = posets.at(id);
+    poset = posets().at(id);
   } catch (const std::out_of_range &e) {
     //DEBUG("%s: poset %lu does not exist\n", __func__, id);
     return false;
@@ -320,7 +333,7 @@ bool jnp1::poset_test(unsigned long id, char const *value1, char const *value2) 
 void jnp1::poset_clear(unsigned long id) {
   //DEBUG("%s(%lu)\n", __func__, id);
   try {
-    poset_t *poset = posets.at(id);
+    poset_t *poset = posets().at(id);
     poset_clear_elements(poset);
     //DEBUG("%s: poset %lu cleared\n", __func__, id);
   } catch (const std::out_of_range &e) {
