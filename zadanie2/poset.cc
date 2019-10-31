@@ -265,13 +265,15 @@ bool jnp1::poset_add(unsigned long id, char const *value1, char const *value2) {
   poset_element_t* p_elem1 = elements()[elem1->second];
   poset_element_t* p_elem2 = elements()[elem2->second];
   
-  elements_t to_insert_bigger = get_set_diff<element_id_t>(std::get<1>(*p_elem2), std::get<1>(*p_elem1));  
+  elements_t to_insert_bigger = get_set_diff<element_id_t>(std::get<1>(*p_elem2), std::get<1>(*p_elem1)); 
+  to_insert_bigger.insert(elem2->second);
   std::get<1>(*p_elem1).insert(to_insert_bigger.begin(), to_insert_bigger.end());
   for(const auto& elem : std::get<0>(*p_elem1)){
     std::get<1>(*elements()[elem]).insert(to_insert_bigger.begin(), to_insert_bigger.end());
   }
   
   elements_t to_insert_smaller = get_set_diff<element_id_t>(std::get<0>(*p_elem1), std::get<0>(*p_elem2));
+  to_insert_smaller.insert(elem1->second);
   std::get<0>(*p_elem2).insert(to_insert_smaller.begin(), to_insert_smaller.end());
   for(const auto& elem : std::get<1>(*p_elem2)){
     std::get<0>(*elements()[elem]).insert(to_insert_smaller.begin(), to_insert_smaller.end());
