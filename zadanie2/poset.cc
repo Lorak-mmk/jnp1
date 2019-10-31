@@ -88,6 +88,7 @@ namespace {
 unsigned long jnp1::poset_new(void) {
   //DEBUG("%s()\n", __func__);
   unsigned long newId = get_new_id(poset_counter);
+  printf("%lu\n", newId);
   posets.emplace(newId, new poset_t());
 
   //DEBUG("%s: poset %lu created\n", __func__, newId);
@@ -263,7 +264,7 @@ bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
     return false;
   }
   
-  for(const auto* elem : std::get<1>(*elemets[elem1->second]) {
+  for(const auto& elem : std::get<1>(*elements[elem1->second])) {
     if(std::get<1>(*elements[elem]).count(elem2->second)) {
       return false;
     }
@@ -278,6 +279,12 @@ bool jnp1::poset_del(unsigned long id, char const *value1, char const *value2) {
 
 bool jnp1::poset_test(unsigned long id, char const *value1, char const *value2) {
   //DEBUG("%s(%lu, \"%s\", \"%s\")\n", __func__, id, value1, value2);
+  
+  if (value1 == nullptr || value2 == nullptr) {
+    //DEBUG("%s: invalid value (NULL)\n", __func__);
+    return false;
+  }
+  
   poset_t *poset;
   try {
     poset = posets.at(id);
