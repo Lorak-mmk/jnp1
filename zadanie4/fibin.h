@@ -19,4 +19,32 @@ static constexpr size_t Var(const char* name) {
     return res;
 }
 
+struct True {};
+struct False {};
+
+template <size_t N>
+struct Fib {
+    // TODO iteracyjnie
+    template <typename ValueType>
+    static constexpr ValueType compute() {
+        return Fib<N - 1>::template compute<ValueType>() + Fib<N - 2>::template compute<ValueType>();
+    }
+};
+
+template <>
+struct Fib<0> {
+    template <typename ValueType>
+    static constexpr ValueType compute() {
+        return ValueType(0);
+    }
+};
+
+template <>
+struct Fib<1> {
+    template <typename ValueType>
+    static constexpr ValueType compute() {
+        return ValueType(1);
+    }
+};
+
 #endif
