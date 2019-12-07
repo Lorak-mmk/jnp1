@@ -8,20 +8,20 @@
 // Returns 0 if name is wrong
 constexpr uint64_t Var(const char* name) {
     uint64_t res = 0;
-    
+
     std::size_t length = 0;
     while (*name) {
         char ch = *(name++);
-        if(! (('1' <= ch && ch <= '9') || ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z'))) return 0;
+        if (!(('1' <= ch && ch <= '9') || ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z'))) return 0;
         length++;
-        
+
         if (ch >= 'A' && ch <= 'Z') ch = 'a' + (ch - 'A');
 
         res *= 256;
         res += ch;
     }
-    
-    if(length < 1 || 6 < length) return 0;
+
+    if (length < 1 || 6 < length) return 0;
     return res;
 }
 // ====== End Hashing variable names ======
@@ -81,8 +81,6 @@ struct Fib<1> {
 };
 // ====== End Fib<N> values ======
 
-
-
 // ====== Variable lookup ======
 struct EmptyEnv {};
 
@@ -93,7 +91,7 @@ template <uint64_t VarID, typename Env>
 struct EnvLookup {};
 
 template <uint64_t VarID>
-struct EnvLookup<VarID, EmptyEnv> {}; // Variable doesn't exists
+struct EnvLookup<VarID, EmptyEnv> {};  // Variable doesn't exists
 
 template <uint64_t VarID, typename Value, typename Env>
 struct EnvLookup<VarID, EnvEntry<VarID, Value, Env>> {
@@ -107,24 +105,46 @@ struct EnvLookup<VarID, EnvEntry<VarID2, Value, Env>> {
 
 // ====== End Variable lookup ======
 
-// TODO
-template<typename T, typename ValueType, typename Env>
+template <typename Expression, typename Enviroment>
 struct Eval {};
 
+template <typename T, typename Env>
+struct Eval<Lit<T>, Env> {
+    template <typename ValueType>
+    using result = T;
+};
 
-template<typename ValueType>
+template <typename Cond, typename Then, typename Else, typename Env>
+struct Eval<If<Cond, Then, Else>, Env> {
+    template <typename ValueType>
+    using result = typename Eval<If<typename Eval<Cond, Env>::template result<ValueType>, Then, Else>,
+                                 Env>::template result<ValueType>;
+};
+
+template <typename Then, typename Else, typename Env>
+struct Eval<If<True, Then, Else>, Env> {
+    template <typename ValueType>
+    using result = typename Eval<Then, Env>::template result<ValueType>;
+};
+
+template <typename Then, typename Else, typename Env>
+struct Eval<If<False, Then, Else>, Env> {
+    template <typename ValueType>
+    using result = typename Eval<Else, Env>::template result<ValueType>;
+};
+
+template <typename ValueType>
 class Fibin {
-public:
-    template<typename Expr, typename X = ValueType, std::enable_if_t<std::is_integral<X>::value, int> = 0>
+   public:
+    template <typename Expr, typename X = ValueType, std::enable_if_t<std::is_integral<X>::value, int> = 0>
     static constexpr ValueType eval() {
-        return ValueType(0);
+        return Eval<Expr, EmptyEnv>::template result<X>::template value<ValueType>;
     }
-    
-    template<typename Expr, typename X = ValueType, std::enable_if_t<!std::is_integral<X>::value, int> = 0>
+
+    template <typename Expr, typename X = ValueType, std::enable_if_t<!std::is_integral<X>::value, int> = 0>
     static void eval() {
         std::cout << "Fibin doesn't support: " << typeid(ValueType).name() << "\n";
     }
-    
 };
 
 #endif
