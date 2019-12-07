@@ -26,6 +26,36 @@ constexpr uint64_t Var(const char* name) {
 }
 // ====== End Hashing variable names ======
 
+template <typename T>
+struct Lit {};
+
+template <typename T, typename... Args>
+struct Sum {};
+
+template <typename T>
+struct Sum<T> {};
+
+template <typename Arg>
+struct Inc1 {};
+
+template <typename Arg>
+struct Inc10 {};
+
+template <typename Left, typename Right>
+struct Eq {};
+
+template <uint64_t VarID, typename Value, typename Expr>
+struct Let {};
+
+template <typename Condition, typename Then, typename Else>
+struct If {};
+
+template <typename VarID, typename Body>
+struct Lambda {};
+
+template <typename Fun, typename Param>
+struct Invoke {};
+
 // ====== Boolean values ======
 struct True {};
 struct False {};
@@ -75,7 +105,11 @@ struct EnvLookup<VarID, EnvEntry<VarID2, Value, Env>> {
     using result = EnvLookup<VarID, Env>;
 };
 
-// ====== Variable lookup ======
+// ====== End Variable lookup ======
+
+// TODO
+template<typename T, typename ValueType, typename Env>
+struct Eval {};
 
 
 template<typename ValueType>
