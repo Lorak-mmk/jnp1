@@ -45,4 +45,19 @@ struct Fib<1> {
     static constexpr ValueType value = ValueType(1);
 };
 
+template<typename ValueType>
+class Fibin {
+public:
+    template<typename Expr, typename X = ValueType, std::enable_if_t<std::is_integral<X>::value, int> = 0>
+    static constexpr ValueType eval() {
+        return ValueType(0);
+    }
+    
+    template<typename Expr, typename X = ValueType, std::enable_if_t<!std::is_integral<X>::value, int> = 0>
+    static void eval() {
+        std::cout << "Fibin doesn't support: " << typeid(ValueType).name() << "\n";
+    }
+    
+};
+
 #endif
