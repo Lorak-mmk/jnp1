@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+// ====== Hashing variable names ======
+
 // Returns 0 if name is wrong
 constexpr uint64_t Var(const char* name) {
     uint64_t res = 0;
@@ -17,16 +19,19 @@ constexpr uint64_t Var(const char* name) {
 
         res *= 256;
         res += ch;
-        
     }
     
     if(length < 1 || 6 < length) return 0;
     return res;
 }
+// ====== End Hashing variable names ======
 
+// ====== Boolean values ======
 struct True {};
 struct False {};
+// ====== End Booleand values ======
 
+// ====== Fib<N> values ======
 template <uint64_t N>
 struct Fib {
     template <typename ValueType>
@@ -44,6 +49,34 @@ struct Fib<1> {
     template <typename ValueType>
     static constexpr ValueType value = ValueType(1);
 };
+// ====== End Fib<N> values ======
+
+
+
+// ====== Variable lookup ======
+struct EmptyEnv {};
+
+template <uint64_t VarID, typename Value, typename Env>
+struct EnvEntry {};
+
+template <uint64_t VarID, typename Env>
+struct EnvLookup {};
+
+template <uint64_t VarID>
+struct EnvLookup<VarID, EmptyEnv> {}; // Variable doesn't exists
+
+template <uint64_t VarID, typename Value, typename Env>
+struct EnvLookup<VarID, EnvEntry<VarID, Value, Env>> {
+    using result = Value;
+};
+
+template <uint64_t VarID, uint64_t VarID2, typename Value, typename Env>
+struct EnvLookup<VarID, EnvEntry<VarID2, Value, Env>> {
+    using result = EnvLookup<VarID, Env>;
+};
+
+// ====== Variable lookup ======
+
 
 template<typename ValueType>
 class Fibin {
