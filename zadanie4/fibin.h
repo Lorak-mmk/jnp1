@@ -47,6 +47,9 @@ struct Eq {};
 template <uint64_t VarID, typename Value, typename Expr>
 struct Let {};
 
+template <uint64_t Value>
+struct Ref {};
+
 template <typename Condition, typename Then, typename Else>
 struct If {};
 
@@ -105,32 +108,27 @@ struct EnvLookup<VarID, EnvEntry<VarID2, Value, Env>> {
 
 // ====== End Variable lookup ======
 
-template <typename Expression, typename Enviroment>
+template <typename ValueType, typename Expression, typename Enviroment>
 struct Eval {};
 
-template <typename T, typename Env>
-struct Eval<Lit<T>, Env> {
-    template <typename ValueType>
+template <typename ValueType, typename T, typename Env>
+struct Eval<ValueType, Lit<T>, Env> {
     using result = T;
 };
 
-template <typename Cond, typename Then, typename Else, typename Env>
-struct Eval<If<Cond, Then, Else>, Env> {
-    template <typename ValueType>
-    using result = typename Eval<If<typename Eval<Cond, Env>::template result<ValueType>, Then, Else>,
-                                 Env>::template result<ValueType>;
+template <typename ValueType, typename Cond, typename Then, typename Else, typename Env>
+struct Eval<ValueType, If<Cond, Then, Else>, Env> {
+    using result = typename Eval<ValueType, If<typename Eval<ValueType, Cond, Env>::result, Then, Else>, Env>::result;
 };
 
-template <typename Then, typename Else, typename Env>
-struct Eval<If<True, Then, Else>, Env> {
-    template <typename ValueType>
-    using result = typename Eval<Then, Env>::template result<ValueType>;
+template <typename ValueType, typename Then, typename Else, typename Env>
+struct Eval<ValueType, If<True, Then, Else>, Env> {
+    using result = typename Eval<ValueType, Then, Env>::result;
 };
 
-template <typename Then, typename Else, typename Env>
-struct Eval<If<False, Then, Else>, Env> {
-    template <typename ValueType>
-    using result = typename Eval<Else, Env>::template result<ValueType>;
+template <typename ValueType, typename Then, typename Else, typename Env>
+struct Eval<ValueType, If<False, Then, Else>, Env> {
+    using result = typename Eval<ValueType, Else, Env>::result;
 };
 
 template <typename ValueType>
@@ -138,7 +136,7 @@ class Fibin {
    public:
     template <typename Expr, typename X = ValueType, std::enable_if_t<std::is_integral<X>::value, int> = 0>
     static constexpr ValueType eval() {
-        return Eval<Expr, EmptyEnv>::template result<X>::template value<ValueType>;
+        return Eval<ValueType, Expr, EmptyEnv>::result::template value<ValueType>;
     }
 
     template <typename Expr, typename X = ValueType, std::enable_if_t<!std::is_integral<X>::value, int> = 0>
