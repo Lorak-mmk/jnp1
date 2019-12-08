@@ -16,12 +16,17 @@ int main() {
     static_assert(Fibin<int>::eval<If<Eq<Lit<True>, Lit<True>>, Lit<Fib<1>>, Lit<Fib<0>>>>() == 1);
 
     // if (if (true) return Fib<10>; else return Fib<4>;) return 1; else return 0;
-    static_assert(
-        Fibin<int>::eval<If<Eq<If<Lit<True>, Lit<Fib<10>>, Lit<Fib<4>>>, Lit<Fib<10>>>, Lit<Fib<1>>, Lit<Fib<0>>>>() ==
-        1);
+    static_assert(Fibin<int>::eval<If<Eq<If<Lit<True>, Lit<Fib<10>>, Lit<Fib<4>>>, Lit<Fib<10>>>, Lit<Fib<1>>, Lit<Fib<0>>>>() == 1);
 
     static_assert(Fibin<int>::eval<Let<Var("A"), Lit<Fib<1>>, Ref<Var("a")>>>() == 1);
 
     static_assert(Fibin<int>::eval<Sum<Lit<Fib<0>>, Lit<Fib<1>>, Lit<Fib<3>>>>() == 3);
     static_assert(Fibin<int>::eval<Inc1<Lit<Fib<0>>>>() == 1);
+    
+    static_assert(Fibin<int>::eval<Invoke<Lambda<Var("x"), Ref<Var("x")>>, Lit<Fib<3>>>>() == 2);
+    
+    static_assert(Fibin<uint64_t>::eval<Invoke<Let<Var("x"), Lit<Fib<0>>,Lambda<Var("x"),Ref<Var("x")>>>,Lit<Fib<1>>>>() == 1);
 }
+
+
+
