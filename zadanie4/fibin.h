@@ -107,11 +107,11 @@ struct EnvLookup<VarID, EnvEntry<VarID2, Value, Env>> {
 // ====== End Variable lookup ======
 
 // ====== Evaluating Language ======
-template <typename Expression, typename Enviroment>
+template <typename Expression, typename Enviroment, typename ValueType>
 struct Eval {};
 
-template <typename T, typename Env>
-struct Eval<Lit<T>, Env> {
+template <typename T, typename Env, typename V>
+struct Eval<Lit<T>, Env, V> {
     using result = T;
 };
 
@@ -121,86 +121,89 @@ struct Add {
     static constexpr ValueType value = A::template value<ValueType> + B::template value<ValueType>;
 };
 
-template <typename Env, typename A, typename B, typename... Args>
-struct Eval<Sum<A, B, Args...>, Env> {
-    using result = typename Eval<Sum<A, Sum<B, Args...>>, Env>::result;
+template <typename Env, typename V, typename A, typename B, typename... Args>
+struct Eval<Sum<A, B, Args...>, Env, V> {
+    using result = typename Eval<Sum<A, Sum<B, Args...>>, Env, V>::result;
 };
 
-template <typename Env, typename A, typename B>
-struct Eval<Sum<A, B>, Env> {
-    using a = typename Eval<A, Env>::result;
-    using b = typename Eval<B, Env>::result;
+template <typename Env, typename V, typename A, typename B>
+struct Eval<Sum<A, B>, Env, V> {
+    using a = typename Eval<A, Env, V>::result;
+    using b = typename Eval<B, Env, V>::result;
     using result = Add<a, b>;
 };
 
-template <typename Env, typename A>
-struct Eval<Inc1<A>, Env> {
-    using result = typename Eval<Sum<A, Lit<Fib<1>>>, Env>::result;
+template <typename Env, typename V, typename A>
+struct Eval<Inc1<A>, Env, V> {
+    using result = typename Eval<Sum<A, Lit<Fib<1>>>, Env, V>::result;
 };
 
-template <typename Env, typename A>
-struct Eval<Inc10<A>, Env> {
-    using result = typename Eval<Sum<A, Lit<Fib<10>>>, Env>::result;
+template <typename Env, typename V, typename A>
+struct Eval<Inc10<A>, Env, V> {
+    using result = typename Eval<Sum<A, Lit<Fib<10>>>, Env, V>::result;
 };
 
-template <typename A, typename B>
-struct Same {
-    using answer = False;
+template <bool B>
+struct Boolean {};
+
+template <>
+struct Boolean<true> {
+    using result = True;
 };
 
-template <typename A>
-struct Same<A, A> {
-    using answer = True;
+template <>
+struct Boolean<false> {
+    using result = False;
 };
 
-template <typename Left, typename Right, typename Env>
-struct Eval<Eq<Left, Right>, Env> {
-    using left = typename Eval<Left, Env>::result;
-    using right = typename Eval<Right, Env>::result;
-    using result = typename Same<left, right>::answer;
+template <typename Left, typename Right, typename Env, typename V>
+struct Eval<Eq<Left, Right>, Env, V> {
+    static constexpr V left = Eval<Left, Env, V>::result::template value<V>;
+    static constexpr V right = Eval<Right, Env, V>::result::template value<V>;
+    using result = typename Boolean<left == right>::result;
 };
 
-template <uint64_t VarID, typename Value, typename Expr, typename Env>
-struct Eval<Let<VarID, Value, Expr>, Env> {
-    using value = typename Eval<Value, Env>::result;
-    using result = typename Eval<Expr, EnvEntry<VarID, value, Env>>::result;
+template <uint64_t VarID, typename Value, typename Expr, typename Env, typename V>
+struct Eval<Let<VarID, Value, Expr>, Env, V> {
+    using value = typename Eval<Value, Env, V>::result;
+    using result = typename Eval<Expr, EnvEntry<VarID, value, Env>, V>::result;
 };
 
-template <uint64_t VarID, typename Env>
-struct Eval<Ref<VarID>, Env> {
+template <uint64_t VarID, typename Env, typename V>
+struct Eval<Ref<VarID>, Env, V> {
     using result = typename EnvLookup<VarID, Env>::result;
 };
 
-template <typename Cond, typename Then, typename Else, typename Env>
-struct Eval<If<Cond, Then, Else>, Env> {
-    using result = typename Eval<If<typename Eval<Cond, Env>::result, Then, Else>, Env>::result;
+template <typename Cond, typename Then, typename Else, typename Env, typename V>
+struct Eval<If<Cond, Then, Else>, Env, V> {
+    using result = typename Eval<If<typename Eval<Cond, Env, V>::result, Then, Else>, Env, V>::result;
 };
 
-template <typename Then, typename Else, typename Env>
-struct Eval<If<True, Then, Else>, Env> {
-    using result = typename Eval<Then, Env>::result;
+template <typename Then, typename Else, typename Env, typename V>
+struct Eval<If<True, Then, Else>, Env, V> {
+    using result = typename Eval<Then, Env, V>::result;
 };
 
-template <typename Then, typename Else, typename Env>
-struct Eval<If<False, Then, Else>, Env> {
-    using result = typename Eval<Else, Env>::result;
+template <typename Then, typename Else, typename Env, typename V>
+struct Eval<If<False, Then, Else>, Env, V> {
+    using result = typename Eval<Else, Env, V>::result;
 };
 
-template <uint64_t VarID, typename Body, typename Env>
+template <uint64_t VarID, typename Body, typename Env, typename V>
 struct Callable {
     template <typename Param>
-    using result = typename Eval<Body, EnvEntry<VarID, Param, Env>>::result;
+    using result = typename Eval<Body, EnvEntry<VarID, Param, Env>, V>::result;
 };
 
-template <uint64_t VarID, typename Body, typename Env>
-struct Eval<Lambda<VarID, Body>, Env> {
-    using result = Callable<VarID, Body, Env>;
+template <uint64_t VarID, typename Body, typename Env, typename V>
+struct Eval<Lambda<VarID, Body>, Env, V> {
+    using result = Callable<VarID, Body, Env, V>;
 };
 
-template <typename Body, typename Param, typename Env>
-struct Eval<Invoke<Body, Param>, Env> {
-    using EvaluatedParam = typename Eval<Param, Env>::result;
-    using EvaluatedBody = typename Eval<Body, Env>::result;
+template <typename Body, typename Param, typename Env, typename V>
+struct Eval<Invoke<Body, Param>, Env, V> {
+    using EvaluatedParam = typename Eval<Param, Env, V>::result;
+    using EvaluatedBody = typename Eval<Body, Env, V>::result;
     using result = typename EvaluatedBody::template result<EvaluatedParam>;
 };
 // ====== End Evaluating Language ======
@@ -211,7 +214,7 @@ class Fibin {
    public:
     template <typename Expr, typename X = ValueType, std::enable_if_t<std::is_integral<X>::value, int> = 0>
     static constexpr ValueType eval() {
-        return Eval<Expr, EmptyEnv>::result::template value<ValueType>;
+        return Eval<Expr, EmptyEnv, ValueType>::result::template value<ValueType>;
     }
 
     template <typename Expr, typename X = ValueType, std::enable_if_t<!std::is_integral<X>::value, int> = 0>
