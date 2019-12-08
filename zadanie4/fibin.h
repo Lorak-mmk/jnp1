@@ -131,6 +131,28 @@ struct Eval<ValueType, If<False, Then, Else>, Env> {
     using result = typename Eval<ValueType, Else, Env>::result;
 };
 
+template <typename ValueType, uint64_t VarID, typename Env>
+struct Eval<ValueType, Ref<VarID>, Env> {
+    using result = typename EnvLookup<VarID, Env>::result;
+};
+
+template <typename A, typename B>
+struct Same {
+    using answer = False;
+};
+
+template <typename A>
+struct Same<A, A> {
+    using answer = True;
+};
+
+template <typename ValueType, typename Left, typename Right, typename Env>
+struct Eval<ValueType, Eq<Left, Right>, Env> {
+    using left = typename Eval<ValueType, Left, Env>::result;
+    using right = typename Eval<ValueType, Right, Env>::result;
+    using result = typename Same<left, right>::answer;
+};
+
 template <typename ValueType>
 class Fibin {
    public:
