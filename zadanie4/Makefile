@@ -7,7 +7,7 @@ all: dev example test
 
 .PHONY: clean
 clean:
-	rm -f *.o dev example
+	rm -f *.o dev example test
 
 example: fibin_example.o
 	$(CXX) $(LDFLAGS) -o $@ $^

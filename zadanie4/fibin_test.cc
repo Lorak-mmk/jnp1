@@ -171,7 +171,7 @@ int main(){
     static_assert(34 == Fibin<int>::eval<Scoping>());
 
     static_assert(2 == Fibin<uint>::eval<Invoke<Let<Var("x"), Lit<Fib<1>>, Lambda<Var("x"), Ref<Var("x")> > >, Lit<Fib<3>> > >());
-
+    /*
     using FunctionComparison =
     Let<
         Var("f"),
@@ -189,7 +189,7 @@ int main(){
         >
     >;
     static_assert(55 == FB::eval<FunctionComparison>());
-
+    */
 
     using Ycombinator =
     Lambda<
