@@ -104,7 +104,7 @@ struct EnvLookup<VarID, EnvEntry<VarID, Value, Env>> {
 
 template <uint64_t VarID, uint64_t VarID2, typename Value, typename Env>
 struct EnvLookup<VarID, EnvEntry<VarID2, Value, Env>> {
-    using result = EnvLookup<VarID, Env>;
+    using result = typename EnvLookup<VarID, Env>::result;
 };
 
 // ====== End Variable lookup ======
