@@ -223,7 +223,7 @@ class Fibin {
    public:
     template <typename Expr, typename X = ValueType, std::enable_if_t<std::is_integral<X>::value, int> = 0>
     static constexpr ValueType eval() {
-         return impl::Eval<Expr, impl::EmptyEnv, ValueType>::result::template value<ValueType>;
+        return impl::Eval<Expr, impl::EmptyEnv, ValueType>::result::template value<ValueType>;
     }
 
     template <typename Expr, typename X = ValueType, std::enable_if_t<!std::is_integral<X>::value, int> = 0>
