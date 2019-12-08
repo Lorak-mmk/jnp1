@@ -10,7 +10,7 @@
 
 // Returns 0 if name is wrong
 constexpr uint64_t Var(const char* name) {
-    uint64_t res = 0;
+    uint64_t result = 0;
 
     std::size_t length = 0;
     while (*name) {
@@ -21,13 +21,13 @@ constexpr uint64_t Var(const char* name) {
 
         if (ch >= 'A' && ch <= 'Z') ch = 'a' + (ch - 'A');
 
-        res *= 256;
-        res += ch;
+        result *= 256;
+        result += ch;
     }
 
     if (length < 1 || 6 < length) throw std::invalid_argument("invalid name length");
 
-    return res;
+    return result;
 }
 // ====== End Hashing variable names ======
 
@@ -87,6 +87,8 @@ struct Fib<1> {
 };
 // ====== End Fib<N> values ======
 
+namespace impl {
+
 // ====== Variable lookup ======
 struct EmptyEnv {};
 
@@ -97,7 +99,7 @@ template <uint64_t VarID, typename Env>
 struct EnvLookup {};
 
 template <uint64_t VarID>
-struct EnvLookup<VarID, EmptyEnv> {};  // Variable doesn't exists
+struct EnvLookup<VarID, EmptyEnv> {};
 
 template <uint64_t VarID, typename Value, typename Env>
 struct EnvLookup<VarID, EnvEntry<VarID, Value, Env>> {
@@ -170,8 +172,8 @@ struct Eval<Eq<Left, Right>, Env, V> {
 
 template <uint64_t VarID, typename Value, typename Expr, typename Env, typename V>
 struct Eval<Let<VarID, Value, Expr>, Env, V> {
-    using value = typename Eval<Value, Env, V>::result;
-    using result = typename Eval<Expr, EnvEntry<VarID, value, Env>, V>::result;
+    using VarValue = typename Eval<Value, Env, V>::result;
+    using result = typename Eval<Expr, EnvEntry<VarID, VarValue, Env>, V>::result;
 };
 
 template <uint64_t VarID, typename Env, typename V>
@@ -213,13 +215,15 @@ struct Eval<Invoke<Body, Param>, Env, V> {
 };
 // ====== End Evaluating Language ======
 
+} // namespace impl
+
 // ====== Fibin class ======
 template <typename ValueType>
 class Fibin {
    public:
     template <typename Expr, typename X = ValueType, std::enable_if_t<std::is_integral<X>::value, int> = 0>
     static constexpr ValueType eval() {
-        return Eval<Expr, EmptyEnv, ValueType>::result::template value<ValueType>;
+         return impl::Eval<Expr, impl::EmptyEnv, ValueType>::result::template value<ValueType>;
     }
 
     template <typename Expr, typename X = ValueType, std::enable_if_t<!std::is_integral<X>::value, int> = 0>

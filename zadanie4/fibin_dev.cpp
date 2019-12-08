@@ -5,6 +5,11 @@ int main() {
     std::cout << Fib<64>::value<uint64_t> << "\n";
     constexpr uint64_t x = Var("abcd");
     std::cout << x << "\n";
+    
+    //static_assert(Fibin<int>::eval<Let<Var(""), Lit<Fib<1>>, Ref<Var("")> > >());
+    //static_assert(Fibin<int>::eval<Let<Var("1111111"), Lit<Fib<1>>, Ref<Var("1111111")> > >());
+    //static_assert(Fibin<int>::eval<Let<Var("!@"), Lit<Fib<1>>, Ref<Var("!@")> > >());
+    //static_assert(Fibin<int>::eval<Let<Var(nullptr), Lit<Fib<1>>, Ref<Var(nullptr)> > >());
 
     // Fibin<const char*>::eval<Fib<1>>();
 
