@@ -15,7 +15,8 @@ constexpr uint64_t Var(const char* name) {
     std::size_t length = 0;
     while (*name) {
         char ch = *(name++);
-        if (!(('1' <= ch && ch <= '9') || ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z'))) return 0;
+        if (!(('1' <= ch && ch <= '9') || ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z')))
+            throw std::invalid_argument("invalid character");
         length++;
 
         if (ch >= 'A' && ch <= 'Z') ch = 'a' + (ch - 'A');
@@ -24,7 +25,8 @@ constexpr uint64_t Var(const char* name) {
         res += ch;
     }
 
-    if (length < 1 || 6 < length) return 0;
+    if (length < 1 || 6 < length) throw std::invalid_argument("invalid name length");
+
     return res;
 }
 // ====== End Hashing variable names ======
