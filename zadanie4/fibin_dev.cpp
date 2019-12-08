@@ -21,4 +21,7 @@ int main() {
         1);
 
     static_assert(Fibin<int>::eval<Let<Var("A"), Lit<Fib<1>>, Ref<Var("a")>>>() == 1);
+
+    static_assert(Fibin<int>::eval<Sum<Lit<Fib<0>>, Lit<Fib<1>>, Lit<Fib<3>>>>() == 3);
+    static_assert(Fibin<int>::eval<Inc1<Lit<Fib<0>>>>() == 1);
 }

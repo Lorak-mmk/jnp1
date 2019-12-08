@@ -32,9 +32,6 @@ struct Lit {};
 template <typename T, typename... Args>
 struct Sum {};
 
-template <typename T>
-struct Sum<T> {};
-
 template <typename Arg>
 struct Inc1 {};
 
@@ -157,6 +154,35 @@ template <typename ValueType, uint64_t VarID, typename Value, typename Expr, typ
 struct Eval<ValueType, Let<VarID, Value, Expr>, Env> {
     using value = typename Eval<ValueType, Value, Env>::result;
     using result = typename Eval<ValueType, Expr, EnvEntry<VarID, value, Env>>::result;
+};
+
+template <typename ValueType, typename Env, typename A, typename B, typename... Args>
+struct Eval<ValueType, Sum<A, B, Args...>, Env> {
+    using result = typename Eval<ValueType, Sum<A, Sum<B, Args...>>, Env>::result;
+};
+
+template <typename A, typename B>
+struct Add {
+    template <typename ValueType>
+    static constexpr ValueType value = A::template value<ValueType> + B::template value<ValueType>;
+};
+
+template <typename ValueType, typename Env, typename A, typename B>
+struct Eval<ValueType, Sum<A, B>, Env> {
+    using a = typename Eval<ValueType, A, Env>::result;
+    using b = typename Eval<ValueType, B, Env>::result;
+    using result = Add<a, b>;
+};
+
+
+template <typename ValueType, typename Env, typename A>
+struct Eval<ValueType, Inc1<A>, Env> {
+    using result = typename Eval<ValueType, Sum<A, Lit<Fib<1>>>, Env>::result;
+};
+
+template <typename ValueType, typename Env, typename A>
+struct Eval<ValueType, Inc10<A>, Env> {
+    using result = typename Eval<ValueType, Sum<A, Lit<Fib<10>>>, Env>::result;
 };
 
 template <typename ValueType>
