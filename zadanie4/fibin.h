@@ -2,6 +2,9 @@
 #define FIBIN_H
 
 #include <cstdint>
+#include <iostream>
+#include <type_traits>
+#include <typeinfo>
 
 // ====== Hashing variable names ======
 
