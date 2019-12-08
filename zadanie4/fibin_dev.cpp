@@ -19,4 +19,6 @@ int main() {
     static_assert(
         Fibin<int>::eval<If<Eq<If<Lit<True>, Lit<Fib<10>>, Lit<Fib<4>>>, Lit<Fib<10>>>, Lit<Fib<1>>, Lit<Fib<0>>>>() ==
         1);
+
+    static_assert(Fibin<int>::eval<Let<Var("A"), Lit<Fib<1>>, Ref<Var("a")>>>() == 1);
 }

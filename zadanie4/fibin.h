@@ -153,6 +153,12 @@ struct Eval<ValueType, Eq<Left, Right>, Env> {
     using result = typename Same<left, right>::answer;
 };
 
+template <typename ValueType, uint64_t VarID, typename Value, typename Expr, typename Env>
+struct Eval<ValueType, Let<VarID, Value, Expr>, Env> {
+    using value = typename Eval<ValueType, Value, Env>::result;
+    using result = typename Eval<ValueType, Expr, EnvEntry<VarID, value, Env>>::result;
+};
+
 template <typename ValueType>
 class Fibin {
    public:
