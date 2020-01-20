@@ -1,6 +1,7 @@
 #include "File.h"
 
 File::File(std::string content) : type(), attributes(), content() {
+    // TODO: implement
     (void)content;
 }
 
