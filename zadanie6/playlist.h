@@ -11,4 +11,7 @@
 #include "ShuffleMode.h"
 #include "Video.h"
 
+// Ogólne TODO
+// TODO: Sprawdzanie argumentów, wyjątki
+
 #endif  // PLAYER_MAIN_H
