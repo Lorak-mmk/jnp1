@@ -6,6 +6,7 @@
 #include "IPlayMode.h"
 #include "IPlayable.h"
 
+// TODO: sprawdzanie cykli w add albo play (wsm w play bo cykl może się pojawić już po add, np jeśli zrobimy add w zagnieżdżonej playliście)
 class Playlist : public IPlayable {
 public:
     explicit Playlist(std::string name);

@@ -1,9 +1,17 @@
 #include "Player.h"
 #include "Audio.h"
+#include "Video.h"
+#include "PlayerException.h"
 
+// TODO: some form of lookup table to support more types
 std::shared_ptr<IPlayable> Player::openFile(File file) {
-    std::shared_ptr<IPlayable> ret = std::make_shared<Audio>(File(""));
-    return ret;
+    if(file.getType() == "audio") {
+        return std::make_shared<Audio>(file);
+    } else if(file.getType() == "video") {
+        return std::make_shared<Video>(file);
+    }
+    // TODO: throw appriopiate error
+    throw PlayerException();
 }
 
 std::shared_ptr<Playlist> Player::createPlaylist(std::string name) {
