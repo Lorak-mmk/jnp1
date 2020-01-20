@@ -2,7 +2,7 @@
 #include "Audio.h"
 
 std::shared_ptr<IPlayable> Player::openFile(File file) {
-    std::shared_ptr<IPlayable> ret = std::make_shared<Audio>();
+    std::shared_ptr<IPlayable> ret = std::make_shared<Audio>(File(""));
     return ret;
 }
 

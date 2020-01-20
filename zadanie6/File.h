@@ -12,8 +12,8 @@ public:
     const std::string& getContent() const;
 
 private:
-    std::map<std::string, std::string> attributes;
     std::string type;
+    std::map<std::string, std::string> attributes;
     std::string content;
 };
 
