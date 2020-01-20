@@ -4,10 +4,11 @@
 
 #include "IPlayMode.h"
 
-class SequenceMode : IPlayMode {
+class SequenceMode : public IPlayMode {
 public:
-    std::vector<std::shared_ptr<IPlayable>> createOrder(std::vector<std::shared_ptr<IPlayable>> elements);
+    std::vector<std::shared_ptr<IPlayable>> createOrder(std::vector<std::shared_ptr<IPlayable>> elements) override;
 };
 
+std::shared_ptr<IPlayMode> createSequenceMode();
 
 #endif //PLAYER_SEQUENCEMODE_H

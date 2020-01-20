@@ -4,10 +4,11 @@
 
 #include "IPlayMode.h"
 
-class OddEvenMode : IPlayMode {
+class OddEvenMode : public IPlayMode {
 public:
     std::vector<std::shared_ptr<IPlayable>> createOrder(std::vector<std::shared_ptr<IPlayable>> elements);
 };
 
+std::shared_ptr<IPlayMode> createOddEvenMode();
 
 #endif //PLAYER_ODDEVENMODE_H

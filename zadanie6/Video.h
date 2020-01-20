@@ -3,7 +3,7 @@
 
 #include "IPlayable.h"
 
-class Video : IPlayable {
+class Video : public IPlayable {
 public:
     void play() override;
 };

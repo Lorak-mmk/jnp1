@@ -9,7 +9,7 @@
 class Player {
 public:
     std::shared_ptr<IPlayable> openFile(File file);
-    Playlist createPlaylist(std::string name);
+    std::shared_ptr<Playlist> createPlaylist(std::string name);
 };
 
 

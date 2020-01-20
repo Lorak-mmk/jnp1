@@ -7,7 +7,7 @@
 #include "IPlayable.h"
 #include "IPlayMode.h"
 
-class Playlist : IPlayable {
+class Playlist : public IPlayable {
 public:
     void add(std::shared_ptr<IPlayable> element);
     void add(std::shared_ptr<IPlayable>, size_t position);
