@@ -1,9 +1,14 @@
+#include <algorithm>
 #include "ShuffleMode.h"
 
+ShuffleMode::ShuffleMode(unsigned seed) : engine(seed) {}
+
 std::vector<std::shared_ptr<IPlayable>> ShuffleMode::createOrder(std::vector<std::shared_ptr<IPlayable>> elements) {
-    return elements;
+    std::vector<std::shared_ptr<IPlayable>> result(elements);
+    std::shuffle(result.begin(), result.end(), engine);
+    return result;
 }
 
-std::shared_ptr<IPlayMode> createShuffleMode(int seed) {
-    return std::make_shared<ShuffleMode>();
+std::shared_ptr<IPlayMode> createShuffleMode(unsigned seed) {
+    return std::make_shared<ShuffleMode>(seed);
 }
