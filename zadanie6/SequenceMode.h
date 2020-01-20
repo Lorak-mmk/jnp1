@@ -6,7 +6,7 @@
 
 class SequenceMode : IPlayMode {
 public:
-    std::vector<IPlayable> createOrder(std::vector<IPlayable> elements);
+    std::vector<std::shared_ptr<IPlayable>> createOrder(std::vector<std::shared_ptr<IPlayable>> elements);
 };
 
 

@@ -1,10 +1,10 @@
 #include "Playlist.h"
 
-void Playlist::add(IPlayable element) {
+void Playlist::add(std::shared_ptr<IPlayable> element) {
 
 }
 
-void Playlist::add(IPlayable element, size_t position) {
+void Playlist::add(std::shared_ptr<IPlayable> element, size_t position) {
 
 }
 
@@ -16,7 +16,7 @@ void Playlist::remove(size_t position) {
 
 }
 
-void Playlist::setMode(IPlayMode mode) {
+void Playlist::setMode(std::shared_ptr<IPlayMode> mode) {
 
 }
 

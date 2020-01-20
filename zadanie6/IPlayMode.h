@@ -2,11 +2,12 @@
 #define PLAYER_IPLAYMODE_H
 
 #include <vector>
+#include <memory>
 #include "IPlayable.h"
 
 class IPlayMode {
 public:
-    virtual std::vector<IPlayable> createOrder(std::vector<IPlayable> elements) = 0;
+    virtual std::vector<std::shared_ptr<IPlayable>> createOrder(std::vector<std::shared_ptr<IPlayable>> elements) = 0;
 };
 
 

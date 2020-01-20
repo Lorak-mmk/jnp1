@@ -1,5 +1,5 @@
 #include "OddEvenMode.h"
 
-std::vector<IPlayable> OddEvenMode::createOrder(std::vector<IPlayable> elements) {
+std::vector<std::shared_ptr<IPlayable>> OddEvenMode::createOrder(std::vector<std::shared_ptr<IPlayable>> elements) {
 
 }

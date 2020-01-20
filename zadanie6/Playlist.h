@@ -9,11 +9,11 @@
 
 class Playlist : IPlayable {
 public:
-    void add(IPlayable element);
-    void add(IPlayable element, size_t position);
+    void add(std::shared_ptr<IPlayable> element);
+    void add(std::shared_ptr<IPlayable>, size_t position);
     void remove();
     void remove(size_t position);
-    void setMode(IPlayMode mode);
+    void setMode(std::shared_ptr<IPlayMode> mode);
     void play() override;
 private:
     std::vector<IPlayable> elements;

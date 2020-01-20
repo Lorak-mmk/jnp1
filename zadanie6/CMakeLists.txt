@@ -5,4 +5,4 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(.)
 
-add_executable(example File.cc Video.cc Audio.cc Player.cc Playlist.cc playlist_example.cc SequenceMode.cc SequenceMode.h ShuffleMode.cc ShuffleMode.h OddEvenMode.cc OddEvenMode.h)
+add_executable(example File.cc Video.cc Audio.cc Player.cc Playlist.cc SequenceMode.cc ShuffleMode.cc OddEvenMode.cc playlist_example.cc )

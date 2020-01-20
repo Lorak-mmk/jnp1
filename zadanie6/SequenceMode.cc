@@ -1,6 +1,6 @@
 #include "SequenceMode.h"
 
 
-std::vector<IPlayable> SequenceMode::createOrder(std::vector<IPlayable> elements) {
+std::vector<std::shared_ptr<IPlayable>> SequenceMode::createOrder(std::vector<std::shared_ptr<IPlayable>> elements) {
 
 }

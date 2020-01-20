@@ -1,5 +1,5 @@
 #include "ShuffleMode.h"
 
-std::vector<IPlayable> ShuffleMode::createOrder(std::vector<IPlayable> elements) {
+std::vector<std::shared_ptr<IPlayable>> ShuffleMode::createOrder(std::vector<std::shared_ptr<IPlayable>> elements) {
 
 }
