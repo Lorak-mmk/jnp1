@@ -1,6 +1,3 @@
 #include "Video.h"
 
-void Video::play() {
-
-}
-
+void Video::play() {}

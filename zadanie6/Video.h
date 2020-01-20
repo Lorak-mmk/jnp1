@@ -7,4 +7,4 @@ class Video : public IPlayable {
 public:
     void play() override;
 };
-#endif //PLAYER_VIDEO_H
+#endif  // PLAYER_VIDEO_H

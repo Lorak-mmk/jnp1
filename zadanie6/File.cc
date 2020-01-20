@@ -1,6 +1,6 @@
 #include "File.h"
 
-File::File(std::string content) : type(), attributes(), content(){
+File::File(std::string content) : type(), attributes(), content() {
     (void)content;
 }
 

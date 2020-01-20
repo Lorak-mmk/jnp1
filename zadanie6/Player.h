@@ -2,15 +2,14 @@
 #define PLAYER_PLAYER_H
 
 #include <memory>
-#include "IPlayable.h"
 #include "File.h"
+#include "IPlayable.h"
 #include "Playlist.h"
 
 class Player {
 public:
-    std::shared_ptr<IPlayable> openFile(File file);
-    std::shared_ptr<Playlist> createPlaylist(std::string name);
+    static std::shared_ptr<IPlayable> openFile(File file);
+    static std::shared_ptr<Playlist> createPlaylist(std::string name);
 };
 
-
-#endif //PLAYER_PLAYER_H
+#endif  // PLAYER_PLAYER_H

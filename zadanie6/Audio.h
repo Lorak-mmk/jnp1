@@ -7,4 +7,4 @@ class Audio : public IPlayable {
 public:
     void play() override;
 };
-#endif //PLAYER_AUDIO_H
+#endif  // PLAYER_AUDIO_H

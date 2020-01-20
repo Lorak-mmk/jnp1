@@ -1,8 +1,8 @@
 #ifndef PLAYER_FILE_H
 #define PLAYER_FILE_H
 
-#include <string>
 #include <map>
+#include <string>
 
 class File {
 public:
@@ -10,10 +10,11 @@ public:
     const std::string& getType() const;
     const std::map<std::string, std::string>& getAttributes() const;
     const std::string& getContent() const;
+
 private:
     std::map<std::string, std::string> attributes;
     std::string type;
     std::string content;
 };
 
-#endif //PLAYER_FILE_H
+#endif  // PLAYER_FILE_H

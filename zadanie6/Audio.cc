@@ -1,5 +1,3 @@
 #include "Audio.h"
 
-void Audio::play() {
-
-}
+void Audio::play() {}

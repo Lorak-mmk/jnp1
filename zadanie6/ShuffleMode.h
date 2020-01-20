@@ -1,7 +1,6 @@
 #ifndef PLAYER_SHUFFLEMODE_H
 #define PLAYER_SHUFFLEMODE_H
 
-
 #include "IPlayMode.h"
 
 class ShuffleMode : public IPlayMode {
@@ -11,4 +10,4 @@ public:
 
 std::shared_ptr<IPlayMode> createShuffleMode(int seed);
 
-#endif //PLAYER_SHUFFLEMODE_H
+#endif  // PLAYER_SHUFFLEMODE_H
