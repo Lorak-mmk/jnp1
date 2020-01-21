@@ -33,9 +33,9 @@ File::File(const std::string &str) {
 
         for (auto it = data.begin(); it != data.end(); ++it)
             if (it == data.begin()) {
-                attrs[type] = *it;
+                type = *it;
             } else if (it == std::prev(data.end())) {
-                attrs[content] = *it;
+                content = *it;
             } else {
                 auto meta = ::split(*it, ':');
                 attrs[meta[0]] = merge_meta(meta);    // "artist:john:lennon"  =>  "artist": "john:lennon"
@@ -47,12 +47,7 @@ File::File(const std::string &str) {
 }
 
 const std::string& File::getType() const {
-    try {
-        return attrs.at(type);
-    }
-    catch (...) {
-        throw FileException("Key out of range");
-    }
+    return type;
 }
 
 const std::map<std::string, std::string>& File::getAttrs() const {
@@ -60,10 +55,5 @@ const std::map<std::string, std::string>& File::getAttrs() const {
 }
 
 const std::string& File::getContent() const {
-    try {
-        return attrs.at(content);
-    }
-    catch (...) {
-        throw FileException("Key out of range");
-    }
+    return attrs.at(content);
 }

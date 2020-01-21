@@ -12,8 +12,8 @@ public:
     [[nodiscard]] const std::string& getContent() const;
 
 private:
-    const std::string type = "type";
-    const std::string content = "content";
+    std::string type;
+    std::string content ;
     std::map<std::string, std::string> attrs;
 };
 
