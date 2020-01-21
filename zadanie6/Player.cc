@@ -1,19 +1,19 @@
 #include "Player.h"
-#include "Audio.h"
-#include "Video.h"
+#include "Media.h"
 #include "PlayerException.h"
+#include "FileException.h"
+#include "MediaFactory.h"
 
-// TODO: some form of lookup table to support more types
-std::shared_ptr<Playable> Player::openFile(File file) {
-    if(file.getType() == "audio") {
-        return std::make_shared<Audio>(file);
-    } else if(file.getType() == "video") {
-        return std::make_shared<Video>(file);
+std::shared_ptr<Media> Player::openFile(const File& file) {
+    try {
+        return MediaFactory::build(file);
     }
-    // TODO: throw appriopiate error
-    throw PlayerException();
+    catch (const std::exception &e) {
+        throw MediaException(e.what());
+    }
 }
 
-std::shared_ptr<Playlist> Player::createPlaylist(std::string name) {
+std::shared_ptr<Playlist> Player::createPlaylist(const std::string &name) {
     return std::make_shared<Playlist>(name);
 }
+
