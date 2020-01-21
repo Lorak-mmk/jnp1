@@ -55,5 +55,5 @@ const std::map<std::string, std::string>& File::getAttrs() const {
 }
 
 const std::string& File::getContent() const {
-    return attrs.at(content);
+    return content;
 }
