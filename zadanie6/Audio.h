@@ -3,9 +3,9 @@
 
 #include <string>
 #include "File.h"
-#include "IPlayable.h"
+#include "Playable.h"
 
-class Audio : public IPlayable {
+class Audio : public Playable {
 public:
     explicit Audio(const File& file);
     void play() override;
@@ -15,4 +15,5 @@ private:
     std::string title;
     std::string content;
 };
+
 #endif  // PLAYER_AUDIO_H

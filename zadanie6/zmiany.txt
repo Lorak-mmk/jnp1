@@ -1,0 +1,7 @@
+1.  Dodany FileException do wyjątków kostruktora File (nieprawidłowe metadane, brak metadanych etc.)
+
+2.  Zaimplementowany File (wdg valgrinda ok). W środku jest klasa extractor, chciałem uniknąć nadmiernego ifowania,
+    poza tym dobrze wyodrębnić zadanie extraktowania i sprawdzania poprawności tekstu do odrebnej klasy. Extractor
+    jest w File.h, bo jest mały i przydaje się tylko tutaj. Przy okazji wpasowuje się we wzorzec fabryka.
+
+

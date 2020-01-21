@@ -3,12 +3,12 @@
 
 #include <memory>
 #include "File.h"
-#include "IPlayable.h"
+#include "Playable.h"
 #include "Playlist.h"
 
 class Player {
 public:
-    static std::shared_ptr<IPlayable> openFile(File file);
+    static std::shared_ptr<Playable> openFile(File file);
     static std::shared_ptr<Playlist> createPlaylist(std::string name);
 };
 

@@ -4,14 +4,14 @@
 #include <cstddef>
 #include <vector>
 #include "IPlayMode.h"
-#include "IPlayable.h"
+#include "Playable.h"
 
 // TODO: sprawdzanie cykli w add albo play (wsm w play bo cykl może się pojawić już po add, np jeśli zrobimy add w zagnieżdżonej playliście)
-class Playlist : public IPlayable {
+class Playlist : public Playable {
 public:
     explicit Playlist(std::string name);
-    void add(const std::shared_ptr<IPlayable>& element);
-    void add(const std::shared_ptr<IPlayable>&, size_t position);
+    void add(const std::shared_ptr<Playable>& element);
+    void add(const std::shared_ptr<Playable>&, size_t position);
     void remove();
     void remove(size_t position);
     void setMode(std::shared_ptr<IPlayMode> new_mode);
@@ -19,7 +19,7 @@ public:
 
 private:
     std::string name;
-    std::vector<std::shared_ptr<IPlayable>> elements;
+    std::vector<std::shared_ptr<Playable>> elements;
     std::shared_ptr<IPlayMode> mode;
 };
 

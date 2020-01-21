@@ -4,7 +4,7 @@
 #include "PlayerException.h"
 
 // TODO: some form of lookup table to support more types
-std::shared_ptr<IPlayable> Player::openFile(File file) {
+std::shared_ptr<Playable> Player::openFile(File file) {
     if(file.getType() == "audio") {
         return std::make_shared<Audio>(file);
     } else if(file.getType() == "video") {

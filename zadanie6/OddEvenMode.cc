@@ -1,7 +1,7 @@
 #include "OddEvenMode.h"
 
-std::vector<std::shared_ptr<IPlayable>> OddEvenMode::createOrder(std::vector<std::shared_ptr<IPlayable>> elements) {
-    std::vector<std::shared_ptr<IPlayable>> result;
+std::vector<std::shared_ptr<Playable>> OddEvenMode::createOrder(std::vector<std::shared_ptr<Playable>> elements) {
+    std::vector<std::shared_ptr<Playable>> result;
     for (size_t i = 0; i < elements.size(); i += 2) {
         result.push_back(elements[i]);
     }

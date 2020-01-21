@@ -2,13 +2,14 @@
 #define PLAYER_VIDEO_H
 
 #include <string>
-#include "IPlayable.h"
+#include "Playable.h"
 #include "File.h"
 
-class Video : public IPlayable {
+class Video : public Playable {
 public:
     explicit Video(const File& file);
     void play() override;
+
 private:
     std::string title;
     std::string year;
