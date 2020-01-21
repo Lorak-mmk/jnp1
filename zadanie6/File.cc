@@ -19,18 +19,20 @@ namespace {
         std::string transcript = str;
 
         for (size_t i = 0; i <= transcript.length(); i++) {
-            if (transcript[i] < 91 && transcript[i] > 64) {
-                if(transcript[i] < 78)
-                    transcript[i] = transcript[i] + 13;
-                else
-                    transcript[i] = transcript[i] - 13;
-            }
+            if (std::isalnum(transcript[i])) {                  // if it's not, character is not changed.
+                if (transcript[i] < 91 && transcript[i] > 64) {
+                    if(transcript[i] < 78)
+                        transcript[i] = transcript[i] + 13;
+                    else
+                        transcript[i] = transcript[i] - 13;
+                }
 
-            if (transcript[i] < 123 && transcript[i] > 96) {
-                if(transcript[i] < 110)
-                    transcript[i] = transcript[i] + 13;
-                else
-                    transcript[i] = transcript[i] - 13;
+                if (transcript[i] < 123 && transcript[i] > 96) {
+                    if(transcript[i] < 110)
+                        transcript[i] = transcript[i] + 13;
+                    else
+                        transcript[i] = transcript[i] - 13;
+                }
             }
         }
 
@@ -46,12 +48,6 @@ namespace {
     }
 }
 
-void File::set_default() {
-    type = "unknown";
-    content = "unknown";
-    attrs = std::map<std::string, std::string>();
-}
-
 
 File::File(const std::string &str) : type(), attrs(), content() {
     try {
@@ -60,7 +56,6 @@ File::File(const std::string &str) : type(), attrs(), content() {
         extractor->extract(this, data);
     }
     catch (...) {
-        set_default();          //todo czy to jest wgl potrzebne ?
         throw FileException();
     }
 }

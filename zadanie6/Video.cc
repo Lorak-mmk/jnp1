@@ -1,19 +1,17 @@
 #include <iostream>
 #include "Video.h"
-
-static const std::string title_key = "title";
-static const std::string year_key = "year";
+#include "FileException.h"
 
 Video::Video(const File &file) {
-    try {
-        const std::map<std::string, std::string>& attrs = file.getAttrs();
-        title = attrs.at(title_key);    // may throw std::out_of_range
-        year = attrs.at(year_key);      //
-        content = file.getContent();    // TODO: ROT13
-    }
-    catch (std::out_of_range &exception) {
+    if (file.getType() != "video")
+        throw FileException();
 
-    }
+    year = file.getAttrs().at("year");
+    title = file.getAttrs().at("title");
+    content = file.getContent();
+
+    if (!content_valid())
+        throw FileException();
 }
 
 void Video::play() {

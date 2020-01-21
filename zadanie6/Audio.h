@@ -3,17 +3,15 @@
 
 #include <string>
 #include "File.h"
-#include "Playable.h"
+#include "Media.h"
 
-class Audio : public Playable {
+class Audio : public Media {
 public:
     explicit Audio(const File& file);
     void play() override;
 
 private:
     std::string artist;
-    std::string title;
-    std::string content;
 };
 
 #endif  // PLAYER_AUDIO_H

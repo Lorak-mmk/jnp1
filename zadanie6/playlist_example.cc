@@ -4,9 +4,9 @@
 int main() {
     Player player;
 
-    File("audio|artist:Louis Armstrong|title:What a Wonderful World|"
+    File ex = File("audio|artist:Louis Armstrong|title:What a Wonderful World|"
          "I see trees of green, red roses too...");
-    File b = File("audio|artist:Louis: Armstrong|title:|"
+    File b = File("audio|artist:Louis: Armstrong|title:!!@#$%^&%^&|"
                   "I see trees of green, red roses too...");
 
 

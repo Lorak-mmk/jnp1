@@ -34,7 +34,6 @@ private:
         ~VideoExtractor() override = default;
     };
 
-    void set_default();
     static FileExtractor *chooseExtractor(const std::vector<std::string> &data);
 };
 
