@@ -1,17 +1,17 @@
 #include "MediaFactory.h"
-#include "MediaExtractor.h"
-#include "FileException.h"
+#include "IMediaExtractor.h"
+#include "Exceptions.h"
+#include "Audio.h"
+#include "Video.h"
 
 std::shared_ptr<Media> MediaFactory::build(const File &file) {
     try {
-        std::shared_ptr<MediaExtractor> extractor;
+        std::shared_ptr<IMediaExtractor> extractor;
 
         if (file.getType() == "audio") {
-            auto foo = std::make_shared<AudioExtractor>();
-            extractor = std::static_pointer_cast<MediaExtractor>(foo);
+            extractor = std::make_shared<AudioExtractor>();
         } else if (file.getType() == "video") {
-            auto foo = std::make_shared<VideoExtractor>();
-            extractor = std::static_pointer_cast<MediaExtractor>(foo);
+            extractor = std::make_shared<VideoExtractor>();
         } else {
             throw FileException("unsupported type");
         }

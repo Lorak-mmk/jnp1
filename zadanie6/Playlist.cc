@@ -8,11 +8,11 @@ Playlist::Playlist(std::string name) : name(std::move(name)), elements() {
     mode = std::make_shared<SequenceMode>();
 }
 
-void Playlist::add(const std::shared_ptr<Playable>& element) {
+void Playlist::add(const std::shared_ptr<IPlayable>& element) {
     elements.push_back(element);
 }
 
-void Playlist::add(const std::shared_ptr<Playable>& element, size_t position) {
+void Playlist::add(const std::shared_ptr<IPlayable>& element, size_t position) {
     elements.insert(elements.begin() + position, element);
 }
 
@@ -30,7 +30,7 @@ void Playlist::setMode(std::shared_ptr<IPlayMode> new_mode) {
 
 void Playlist::play() {
     std::cout << "Playlist [" << name << "]\n";
-    for (const std::shared_ptr<Playable>& element : mode->createOrder(elements)) {
+    for (const std::shared_ptr<IPlayable>& element : mode->createOrder(elements)) {
         element->play();
     }
 }

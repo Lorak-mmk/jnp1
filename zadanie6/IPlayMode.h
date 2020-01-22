@@ -3,11 +3,11 @@
 
 #include <memory>
 #include <vector>
-#include "Playable.h"
+#include "IPlayable.h"
 
 class IPlayMode {
 public:
-    virtual std::vector<std::shared_ptr<Playable>> createOrder(std::vector<std::shared_ptr<Playable>> elements) = 0;
+    virtual std::vector<std::shared_ptr<IPlayable>> createOrder(std::vector<std::shared_ptr<IPlayable>> elements) = 0;
 };
 
 #endif  // PLAYER_IPLAYMODE_H

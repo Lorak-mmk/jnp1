@@ -7,7 +7,7 @@
 class ShuffleMode : public IPlayMode {
 public:
     explicit ShuffleMode(unsigned seed);
-    std::vector<std::shared_ptr<Playable>> createOrder(std::vector<std::shared_ptr<Playable>> elements);
+    std::vector<std::shared_ptr<IPlayable>> createOrder(std::vector<std::shared_ptr<IPlayable>> elements);
 
 private:
     std::default_random_engine engine;

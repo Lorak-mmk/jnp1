@@ -1,4 +1,4 @@
-#include "FileException.h"
+#include "Exceptions.h"
 #include "File.h"
 #include <sstream>
 #include <vector>
@@ -9,37 +9,35 @@ namespace {
         std::stringstream iss(str);
         std::string auxiliary;
 
-        while (std::getline(iss, auxiliary, delimiter))
+        while (std::getline(iss, auxiliary, delimiter)) {
             data.push_back(auxiliary);
+        }
 
         return data;
     }
 
     std::string merge_meta(const std::vector<std::string> &meta) {
         std::string result;
-        for (auto it = std::next(meta.begin()); it != meta.end(); ++it)
+        for (auto it = std::next(meta.begin()); it != meta.end(); ++it) {
             result += (it == std::next(meta.begin()) ? *it : ":" + *it);
+        }
 
         return result;
     }
 }
 
-File::File(const std::string &str) {
+File::File(const std::string &str) : attrs(), type(), content() {
     try {
-        attrs = std::map<std::string, std::string>();
-        const std::vector<std::string> data = ::split(str, '|');
-        if (data.size() < 4UL)
-            throw FileException("corrupt file");
+        const auto& data = ::split(str, '|');
 
-        for (auto it = data.begin(); it != data.end(); ++it)
-            if (it == data.begin()) {
-                type = *it;
-            } else if (it == std::prev(data.end())) {
-                content = *it;
-            } else {
-                auto meta = ::split(*it, ':');
-                attrs[meta[0]] = merge_meta(meta);    // "artist:john:lennon"  =>  "artist": "john:lennon"
-            }
+        type = *data.begin();
+        content = *std::prev(data.end());
+
+        for (auto it = std::next(data.begin()); it < std::prev(data.end()); ++it) {
+            const auto& meta = ::split(*it, ':');
+            if(meta.size() == 1) throw FileException("Invalid metadata (no value)"); // e.g "audio|key|content"
+            attrs[meta[0]] = merge_meta(meta);    // "artist:john:lennon"  =>  "artist": "john:lennon"
+        }
     }
     catch (const std::exception &e) {   // Any subclass of std::exception (nothing else can be thrown here)
         throw FileException(e.what());

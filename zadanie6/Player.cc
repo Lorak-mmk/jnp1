@@ -1,7 +1,6 @@
 #include "Player.h"
 #include "Media.h"
-#include "PlayerException.h"
-#include "FileException.h"
+#include "Exceptions.h"
 #include "MediaFactory.h"
 
 std::shared_ptr<Media> Player::openFile(const File& file) {

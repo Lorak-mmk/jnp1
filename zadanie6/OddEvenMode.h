@@ -5,7 +5,7 @@
 
 class OddEvenMode : public IPlayMode {
 public:
-    std::vector<std::shared_ptr<Playable>> createOrder(std::vector<std::shared_ptr<Playable>> elements) override;
+    std::vector<std::shared_ptr<IPlayable>> createOrder(std::vector<std::shared_ptr<IPlayable>> elements) override;
 };
 
 std::shared_ptr<IPlayMode> createOddEvenMode();

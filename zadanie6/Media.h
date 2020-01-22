@@ -1,10 +1,10 @@
 #ifndef PLAYER_MEDIA_H
 #define PLAYER_MEDIA_H
 
-#include "Playable.h"
+#include "IPlayable.h"
 #include "File.h"
 
-class Media : public Playable {
+class Media : public IPlayable {
 protected:
     std::string content;
     std::string title;
@@ -12,23 +12,6 @@ protected:
     bool content_valid();
 };
 
-class Audio : public Media {
-public:
-    explicit Audio(const File& file);
-    void play() override;
-
-private:
-    std::string artist;
-};
-
-class Video : public Media {
-public:
-    explicit Video(const File& file);
-    void play() override;
-
-private:
-    std::string year;
-};
 
 
 #endif //PLAYER_MEDIA_H

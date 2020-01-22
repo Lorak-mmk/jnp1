@@ -6,7 +6,7 @@
 #include "IPlayMode.h"
 #include "OddEvenMode.h"
 #include "Player.h"
-#include "PlayerException.h"
+#include "Exceptions.h"
 #include "SequenceMode.h"
 #include "ShuffleMode.h"
 
