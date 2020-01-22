@@ -8,6 +8,7 @@
 class IPlayMode {
 public:
     virtual std::vector<std::shared_ptr<IPlayable>> createOrder(std::vector<std::shared_ptr<IPlayable>> elements) = 0;
+    virtual ~IPlayMode() = default;
 };
 
 #endif  // PLAYER_IPLAYMODE_H
