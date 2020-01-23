@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include "Exceptions.h"
+#include "MediaFactory.h"
 
 namespace {
 bool content_valid(const std::string& content) {
@@ -47,6 +48,15 @@ std::string ROT13(const std::string& str) {
 bool is_number(const std::string& s) {
     return !s.empty() && std::find_if(*s.begin() == '-' ? s.begin() + 1 : s.begin(), s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
 }
+
+class InitModule {
+    public:
+        InitModule() {
+            MediaFactory::registerFiletype("video", std::make_shared<VideoExtractor>());
+        }
+    };
+
+InitModule init;
 }  // namespace
 
 Video::Video(const std::map<std::string, std::string>& attrs, const std::string& content) {

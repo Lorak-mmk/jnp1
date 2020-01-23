@@ -1,6 +1,7 @@
 #include "Audio.h"
 #include <iostream>
 #include "Exceptions.h"
+#include "MediaFactory.h"
 
 namespace {
 bool content_valid(const std::string& content) {
@@ -17,6 +18,15 @@ bool content_valid(const std::string& content) {
 
     return true;
 }
+
+class InitModule {
+public:
+    InitModule() {
+        MediaFactory::registerFiletype("audio", std::make_shared<AudioExtractor>());
+    }
+};
+
+InitModule init;
 }  // namespace
 
 Audio::Audio(const std::map<std::string, std::string>& attrs, const std::string& content) {
