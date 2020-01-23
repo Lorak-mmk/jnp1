@@ -35,8 +35,7 @@ class Container {
     Container() = default;
     Container(const Container &other) : table(), order(other.order), blockCoW(false) {
         for (iterator_t it = order.begin(); it != order.end(); it++) {
-            auto to_insert = iterator_t(it);
-            table.emplace(&to_insert->first, to_insert);
+            table.emplace(&it->first, iterator_t(it));
         }
     }
     Container(Container &&other) noexcept = default;

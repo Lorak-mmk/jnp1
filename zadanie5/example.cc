@@ -3,12 +3,6 @@
 #include <vector>
 #include <string>
 #include <cassert>
-#include <cxxabi.h>
-const char* currentExceptionTypeName()
-{
-    int status;
-    return abi::__cxa_demangle(abi::__cxa_current_exception_type()->name(), 0, 0, &status);
-}
 using namespace std;
 int ile = 0;
 string message;
@@ -90,13 +84,13 @@ int main() {
         << " to znaczy, że przeszedł test. Przy odpalaniu z valgrindem wyrzuć fragment "
         << "z tworzeniem dużej tablicy (valgrind nie umie obsłużyć bad_alloc rzuconego "
         << "przez new[])." << std::endl << std::endl;
-    /*try {
+    try {
         insertion_ordered_map<int, int> *t = new insertion_ordered_map<int, int>[1000000000];
         delete[] t;
         cout << "czemu to nie wyjebało pamięci xD\n";
     } catch (bad_alloc &e) {
         cout << "bad_alloc (ok)\n";
-    }*/
+    }
     insertion_ordered_map<Key, int, Hash> m1;
     m1.insert(Key{2},3);
     ile = 1;
@@ -316,7 +310,6 @@ int main() {
             cout << "chyba coś nie tak" << endl;
             throw;
         } catch (...) {
-            std::cout<<"1. Type of caught exception is "<<currentExceptionTypeName()<<std::endl;
             cout << "X D\n";
             throw;
         }
@@ -324,7 +317,6 @@ int main() {
     wypisuj=true; ile=0;
     fajna2=fajna;
     srand(2137);
-
     for (int i = 0; i < 50; i++) {
         try {
             wypisuj=true;
@@ -348,12 +340,10 @@ int main() {
             cout << "chyba coś nie tak" << endl;
             throw;
         } catch (...) {
-            std::cout<<"2. Type of caught exception is "<<currentExceptionTypeName()<<std::endl;
             cout << "X D\n";
             throw;
         }
     }
-
     // sprawdzam czy jest konstruktor bezparametrowy i kopiujący
     insertion_ordered_map<int,int> it, it2(it);
     assert(it.empty());
