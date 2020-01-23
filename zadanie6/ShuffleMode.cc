@@ -11,9 +11,5 @@ std::vector<std::shared_ptr<IPlayable>> ShuffleMode::createOrder(std::vector<std
 }
 
 std::shared_ptr<IPlayMode> createShuffleMode(unsigned seed) {
-    try {
-        return std::make_shared<ShuffleMode>(seed);
-    } catch (...) {
-        throw ModeException("Exception while creating mode");
-    }
+    return std::make_shared<ShuffleMode>(seed);
 }

@@ -6,33 +6,32 @@
 #include "SequenceMode.h"
 #include "Video.h"
 
-Playlist::Playlist(std::string name) try : name(std::move(name)), elements(), mode(std::make_shared<SequenceMode>()) {
-} catch (const std::exception &e) {
-    throw PlaylistException("Bad playlist initialisation");
-}
+Playlist::Playlist(std::string name) : name(std::move(name)), elements(), mode(std::make_shared<SequenceMode>()) {}
 
 bool Playlist::contains(IPlayable *other) {
     for (const auto &element : elements) {
-        if (element->contains(other))
+        if (element->contains(other)) {
             return true;
+        }
     }
     return false;
 }
 
 void Playlist::add(const std::shared_ptr<IPlayable> &element) {
-    try {
-        elements.push_back(element);
-    } catch (...) {
-        throw PlaylistException("Bad insertion to playlist");
+    if(element->contains(this)) {
+        throw PlaylistException("Cycle detected (playlist add)");
     }
+    elements.push_back(element);
 }
 
 void Playlist::add(const std::shared_ptr<IPlayable> &element, size_t position) {
-    try {
-        elements.insert(elements.begin() + position, element);
-    } catch (...) {
-        throw PlaylistException("Bad insertion to playlist");
+    if(elements.size() < position) {
+        throw PlaylistException("Index out of range (playlist add)");
     }
+    if(element->contains(this)) {
+        throw PlaylistException("Cycle detected (playlist add)");
+    }
+    elements.insert(elements.begin() + position, element);
 }
 
 void Playlist::remove() {
@@ -44,14 +43,10 @@ void Playlist::remove() {
 }
 
 void Playlist::remove(size_t position) {
-    if (elements.size() < position) {
-        throw PlaylistException("Index out of range");
+    if (elements.size() <= position) {
+        throw PlaylistException("Index out of range (playlist remove)");
     }
-    try {
-        elements.erase(elements.begin() + position);
-    } catch (...) {
-        throw PlaylistException("Bad removal from playlist");
-    }
+    elements.erase(elements.begin() + position);
 }
 
 void Playlist::setMode(std::shared_ptr<IPlayMode> new_mode) noexcept {
@@ -59,11 +54,8 @@ void Playlist::setMode(std::shared_ptr<IPlayMode> new_mode) noexcept {
 }
 
 void Playlist::play() {
-    try {
-        std::cout << "Playlist [" << name << "]\n";
-        for (const std::shared_ptr<IPlayable> &element : mode->createOrder(elements))
-            element->play();
-    } catch (...) {
-        throw PlaylistException("Playlist::play terminated (IO error?)");
+    std::cout << "Playlist [" << name << "]\n";
+    for (const std::shared_ptr<IPlayable> &element : mode->createOrder(elements)) {
+        element->play();
     }
 }

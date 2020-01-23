@@ -5,21 +5,16 @@
 #include "Video.h"
 
 std::shared_ptr<IPlayable> MediaFactory::build(const File &file) {
-    try {
-        std::shared_ptr<IMediaExtractor> extractor;
+    std::shared_ptr<IMediaExtractor> extractor;
 
-        if (file.getType() == "audio") {
-            extractor = std::make_shared<AudioExtractor>();
-        } else if (file.getType() == "video") {
-            extractor = std::make_shared<VideoExtractor>();
-        } else {
-            throw FileException("unsupported type");
-        }
+    if (file.getType() == "audio") {
+        extractor = std::make_shared<AudioExtractor>();
+    } else if (file.getType() == "video") {
+        extractor = std::make_shared<VideoExtractor>();
+    } else {
+        throw FileException("unsupported type");
+    }
 
-        return extractor->extract(file);
-    }
-    catch (const std::exception &e) {
-        throw MediaException(e.what());
-    }
+    return extractor->extract(file);
 }
 

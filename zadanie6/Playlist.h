@@ -21,8 +21,6 @@ private:
     std::string name;
     std::vector<std::shared_ptr<IPlayable>> elements;
     std::shared_ptr<IPlayMode> mode;
-
-    bool is_cycle(std::set<std::shared_ptr<IPlayable>> &used);
 };
 
 #endif  // PLAYER_PLAYLIST_H

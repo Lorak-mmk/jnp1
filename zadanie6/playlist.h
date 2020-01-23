@@ -4,8 +4,8 @@
 #include "Exceptions.h"
 #include "File.h"
 #include "OddEvenMode.h"
-#include "Player.h"
 #include "SequenceMode.h"
 #include "ShuffleMode.h"
+#include "Player.h"
 
 #endif  // PLAYER_MAIN_H
