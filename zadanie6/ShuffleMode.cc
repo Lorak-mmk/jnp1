@@ -1,6 +1,5 @@
 #include "ShuffleMode.h"
 #include <algorithm>
-#include "Exceptions.h"
 
 ShuffleMode::ShuffleMode(unsigned seed) : engine(seed) {}
 

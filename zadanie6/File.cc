@@ -4,27 +4,27 @@
 #include "Exceptions.h"
 
 namespace {
-std::vector<std::string> split(const std::string &str, char delimiter) {
-    std::vector<std::string> data;
-    std::stringstream iss(str);
-    std::string auxiliary;
+    std::vector<std::string> split(const std::string &str, char delimiter) {
+        std::vector<std::string> data;
+        std::stringstream iss(str);
+        std::string auxiliary;
 
-    while (std::getline(iss, auxiliary, delimiter)) {
-        data.push_back(auxiliary);
+        while (std::getline(iss, auxiliary, delimiter)) {
+            data.push_back(auxiliary);
+        }
+
+        return data;
     }
 
-    return data;
-}
+    std::string merge_meta(const std::vector<std::string> &meta) {
+        std::string result;
+        for (auto it = std::next(meta.begin()); it != meta.end(); ++it) {
+            result += (it == std::next(meta.begin()) ? *it : ":" + *it);
+        }
 
-std::string merge_meta(const std::vector<std::string> &meta) {
-    std::string result;
-    for (auto it = std::next(meta.begin()); it != meta.end(); ++it) {
-        result += (it == std::next(meta.begin()) ? *it : ":" + *it);
+        return result;
     }
-
-    return result;
 }
-}  // namespace
 
 File::File(const std::string &str) : type(), attrs(), content() {
     const auto &data = ::split(str, '|');

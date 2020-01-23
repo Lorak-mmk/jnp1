@@ -30,9 +30,4 @@ public:
     explicit FileException(const char *str) : MediaException(str) {}
 };
 
-class ModeException : public PlayerException {
-public:
-    explicit ModeException(const char *str) : PlayerException(str) {}
-};
-
 #endif  // PLAYER_EXCEPTIONS_H

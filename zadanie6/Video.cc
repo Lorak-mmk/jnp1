@@ -4,50 +4,52 @@
 #include "Exceptions.h"
 
 namespace {
-bool content_valid(const std::string& content) {
-    for (char ch : content) {
-        bool is_special = false;
-        if (ch == '.' || ch == ',' || ch == '!' || ch == '?' || ch == '\'' || ch == ':' || ch == ';' || ch == '-') {
-            is_special = true;
+    bool content_valid(const std::string& content) {
+        for (char ch : content) {
+            bool is_special = false;
+            if (ch == '.' || ch == ',' || ch == '!' || ch == '?' || ch == '\'' || ch == ':' || ch == ';' || ch == '-') {
+                is_special = true;
+            }
+
+            if (!std::isalnum(ch) && !std::isblank(ch) && !is_special) {
+                return false;
+            }
         }
 
-        if (!std::isalnum(ch) && !std::isblank(ch) && !is_special) {
-            return false;
-        }
+        return true;
     }
 
-    return true;
-}
+    std::string ROT13(const std::string& str) {
+        std::string transcript = str;
+        int diff = 13;
 
-std::string ROT13(const std::string& str) {
-    std::string transcript = str;
-    int diff = 13;
-
-    for (size_t i = 0; i <= transcript.length(); i++) {
-        if (std::isalnum(transcript[i])) {  // if it's not, character is not changed.
-            if (std::isupper(transcript[i])) {
-                if (transcript[i] < 'N') {
-                    transcript[i] = transcript[i] + diff;
-                } else {
-                    transcript[i] = transcript[i] - diff;
-                }
-            } else if (std::islower(transcript[i])) {
-                if (transcript[i] < 'n') {
-                    transcript[i] = transcript[i] + diff;
-                } else {
-                    transcript[i] = transcript[i] - diff;
+        for (size_t i = 0; i <= transcript.length(); i++) {
+            if (std::isalnum(transcript[i])) {  // if it's not, character is not changed.
+                if (std::isupper(transcript[i])) {
+                    if (transcript[i] < 'N') {
+                        transcript[i] = transcript[i] + diff;
+                    } else {
+                        transcript[i] = transcript[i] - diff;
+                    }
+                } else if (std::islower(transcript[i])) {
+                    if (transcript[i] < 'n') {
+                        transcript[i] = transcript[i] + diff;
+                    } else {
+                        transcript[i] = transcript[i] - diff;
+                    }
                 }
             }
         }
+
+        return transcript;
     }
 
-    return transcript;
+    bool is_number(const std::string& s) {
+        return !s.empty() && std::find_if(
+                *s.begin() == '-' ? s.begin() + 1 : s.begin(), s.end(), \
+                [](unsigned char c) { return !std::isdigit(c); }) == s.end();
+    }
 }
-
-bool is_number(const std::string& s) {
-    return !s.empty() && std::find_if(*s.begin() == '-' ? s.begin() + 1 : s.begin(), s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
-}
-}  // namespace
 
 Video::Video(const std::map<std::string, std::string>& attrs, const std::string& content) {
     if(!attrs.count("year") || !attrs.count("title")) {
