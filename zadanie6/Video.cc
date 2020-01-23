@@ -46,21 +46,22 @@ std::string ROT13(const std::string& str) {
 }
 
 bool is_number(const std::string& s) {
-    return !s.empty() && std::find_if(*s.begin() == '-' ? s.begin() + 1 : s.begin(), s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
+    return !s.empty() && std::find_if(*s.begin() == '-' ? s.begin() + 1 : s.begin(), s.end(),
+                                      [](unsigned char c) { return !std::isdigit(c); }) == s.end();
 }
 
 class InitModule {
-    public:
-        InitModule() {
-            MediaFactory::registerFiletype("video", std::make_shared<VideoExtractor>());
-        }
-    };
+public:
+    InitModule() {
+        MediaFactory::registerFiletype("video", std::make_shared<VideoExtractor>());
+    }
+};
 
 InitModule init;
 }  // namespace
 
 Video::Video(const std::map<std::string, std::string>& attrs, const std::string& content) {
-    if(!attrs.count("year") || !attrs.count("title")) {
+    if (!attrs.count("year") || !attrs.count("title")) {
         throw MediaException("(Video)Required metadata fields not found");
     }
     year = attrs.at("year");

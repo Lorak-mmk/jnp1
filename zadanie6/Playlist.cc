@@ -18,17 +18,17 @@ bool Playlist::contains(IPlayable *other) {
 }
 
 void Playlist::add(const std::shared_ptr<IPlayable> &element) {
-    if(element->contains(this)) {
+    if (element->contains(this)) {
         throw PlaylistException("Cycle detected (playlist add)");
     }
     elements.push_back(element);
 }
 
 void Playlist::add(const std::shared_ptr<IPlayable> &element, size_t position) {
-    if(elements.size() < position) {
+    if (elements.size() < position) {
         throw PlaylistException("Index out of range (playlist add)");
     }
-    if(element->contains(this)) {
+    if (element->contains(this)) {
         throw PlaylistException("Cycle detected (playlist add)");
     }
     elements.insert(elements.begin() + position, element);
