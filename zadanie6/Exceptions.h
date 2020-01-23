@@ -7,9 +7,10 @@
 class PlayerException : public std::exception {
 public:
     explicit PlayerException(const char *str) : msg(str) {}
-    [[nodiscard]] const char* what() const noexcept override {
+    [[nodiscard]] const char *what() const noexcept override {
         return msg.c_str();
     }
+
 protected:
     std::string msg;
 };
@@ -34,5 +35,4 @@ public:
     explicit ModeException(const char *str) : PlayerException(str) {}
 };
 
-
-#endif //PLAYER_EXCEPTIONS_H
+#endif  // PLAYER_EXCEPTIONS_H

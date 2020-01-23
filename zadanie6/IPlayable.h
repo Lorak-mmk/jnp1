@@ -4,6 +4,9 @@
 class IPlayable {
 public:
     virtual void play() = 0;
+    virtual bool contains(IPlayable* other) {
+        return this == other;
+    }
     virtual ~IPlayable() = default;
 };
 

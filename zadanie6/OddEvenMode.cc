@@ -15,8 +15,7 @@ std::vector<std::shared_ptr<IPlayable>> OddEvenMode::createOrder(std::vector<std
 std::shared_ptr<IPlayMode> createOddEvenMode() {
     try {
         return std::make_shared<OddEvenMode>();
-    }
-    catch (...) {
+    } catch (...) {
         throw ModeException("Exception while creating mode");
     }
 }

@@ -17,9 +17,8 @@ private:
 
 class VideoExtractor : public IMediaExtractor {
 public:
-    std::shared_ptr<IPlayable> extract(const File &file) override;
+    std::shared_ptr<IPlayable> extract(const File& file) override;
     ~VideoExtractor() = default;
 };
 
-
-#endif //PLAYER_VIDEO_H
+#endif  // PLAYER_VIDEO_H

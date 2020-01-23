@@ -10,4 +10,4 @@ public:
     static std::shared_ptr<IPlayable> build(const File &file);
 };
 
-#endif //PLAYER_MEDIAFACTORY_H
+#endif  // PLAYER_MEDIAFACTORY_H

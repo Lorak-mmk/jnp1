@@ -4,7 +4,6 @@
 int main() {
     Player player;
 
-
     auto whatAWonderfulWorld =
         player.openFile(File("audio|artist:Louis Armstrong|title:What a Wonderful World|"
                              "I see trees of green, red roses too..."));

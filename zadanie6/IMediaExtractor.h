@@ -1,9 +1,9 @@
 #ifndef PLAYER_IMEDIAEXTRACTOR_H
 #define PLAYER_IMEDIAEXTRACTOR_H
 
+#include <memory>
 #include "File.h"
 #include "IPlayable.h"
-#include <memory>
 
 class IMediaExtractor {
 public:
@@ -11,4 +11,4 @@ public:
     virtual ~IMediaExtractor() = default;
 };
 
-#endif //PLAYER_IMEDIAEXTRACTOR_H
+#endif  // PLAYER_IMEDIAEXTRACTOR_H

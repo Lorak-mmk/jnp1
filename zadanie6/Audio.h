@@ -16,8 +16,8 @@ private:
 
 class AudioExtractor : public IMediaExtractor {
 public:
-    std::shared_ptr<IPlayable> extract(const File &file) override;
+    std::shared_ptr<IPlayable> extract(const File& file) override;
     ~AudioExtractor() = default;
 };
 
-#endif //PLAYER_AUDIO_H
+#endif  // PLAYER_AUDIO_H
