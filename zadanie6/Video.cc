@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include "Video.h"
 #include "Exceptions.h"
 
@@ -27,6 +28,11 @@ namespace {
 
         return transcript;
     }
+
+    bool is_number(const std::string& s) {
+        return !s.empty() && std::find_if(s.begin(),
+                s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
+    }
 }
 
 Video::Video(const File &file) {
@@ -37,7 +43,8 @@ Video::Video(const File &file) {
     title = file.getAttrs().at("title");
     content = ::ROT13(file.getContent());
 
-    if (!content_valid())
+
+    if (!content_valid() || !is_number(year))
         throw MediaException("corrupt content");
 }
 

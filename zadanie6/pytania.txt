@@ -32,3 +32,6 @@ ad throw exception if attrs don't exist, w audio i video - inicjuję attrs w kos
 
 dołożyłem łapanie wyjątków w playlist.cpp i sprawdzanie cyklu - psrawdzam tylko podczas play, może się zdarzyć że początkowo
 playlista będzie mniałą cykl, ale potem po jakimś remove już nie - wtedy play powinien zadziałać normalnie
+
+dołożyłem sprawdzenie czy w video year to liczba (nie powiedzieli że to int, trzymana jest w stringu więc może być np
+999999999999999999999999999999999) na podstawie pytania z moodla

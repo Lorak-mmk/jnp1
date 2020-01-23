@@ -1,4 +1,5 @@
 #include "OddEvenMode.h"
+#include "Exceptions.h"
 
 std::vector<std::shared_ptr<IPlayable>> OddEvenMode::createOrder(std::vector<std::shared_ptr<IPlayable>> elements) {
     std::vector<std::shared_ptr<IPlayable>> result;
@@ -12,5 +13,10 @@ std::vector<std::shared_ptr<IPlayable>> OddEvenMode::createOrder(std::vector<std
 }
 
 std::shared_ptr<IPlayMode> createOddEvenMode() {
-    return std::make_shared<OddEvenMode>();
+    try {
+        return std::make_shared<OddEvenMode>();
+    }
+    catch (...) {
+        throw ModeException("Exception while creating mode");
+    }
 }
