@@ -13,8 +13,8 @@ public:
 
 private:
     std::string type;
-    std::string content;
     std::map<std::string, std::string> attrs;
+    std::string content;
 };
 
 #endif  // PLAYER_FILE_H

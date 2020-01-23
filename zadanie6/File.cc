@@ -26,7 +26,7 @@ std::string merge_meta(const std::vector<std::string> &meta) {
 }
 }  // namespace
 
-File::File(const std::string &str) : attrs(), type(), content() {
+File::File(const std::string &str) : type(), attrs(), content() {
     const auto &data = ::split(str, '|');
 
     type = *data.begin();
