@@ -3,6 +3,19 @@
 #include "Exceptions.h"
 
 namespace {
+    bool content_valid(const std::string& content) {
+        for (char ch : content) {
+            bool is_special = false;
+            if (ch == '.' || ch == ',' || ch == '!' || ch == '?' || ch == '\'' || ch == ':' || ch == ';' || ch == '-')
+                is_special = true;
+
+            if (!std::isalnum(ch) && !std::isblank(ch) && !is_special)
+                return false;
+        }
+
+        return true;
+    }
+
     std::string ROT13(const std::string &str) {
         std::string transcript = str;
         int diff = 13;
@@ -14,9 +27,7 @@ namespace {
                         transcript[i] = transcript[i] + diff;
                     else
                         transcript[i] = transcript[i] - diff;
-                }
-
-                if (std::islower(transcript[i])) {
+                } else if (std::islower(transcript[i])) {
                     if(transcript[i] < 'n')
                         transcript[i] = transcript[i] + diff;
                     else
@@ -29,15 +40,12 @@ namespace {
     }
 }
 
-Video::Video(const File &file) {
-    if (file.getType() != "video")
-        throw MediaException("unsupported type passed to Video");
+Video::Video(const std::map<std::string, std::string>& attrs, const std::string& content) {
+    year = attrs.at("year");
+    title = attrs.at("title");
+    this->content = ::ROT13(content);
 
-    year = file.getAttrs().at("year");
-    title = file.getAttrs().at("title");
-    content = ::ROT13(file.getContent());
-
-    if (!content_valid())
+    if (!::content_valid(this->content))
         throw MediaException("corrupt content");
 }
 
@@ -45,7 +53,7 @@ void Video::play() {
     std::cout << "Movie [" << title << ", " << year << "]: " << content << "\n";
 }
 
-std::shared_ptr<Media> VideoExtractor::extract(const File &file) {
-    return std::make_shared<Video>(file);
+std::shared_ptr<IPlayable> VideoExtractor::extract(const File &file) {
+    return std::make_shared<Video>(file.getAttrs(), file.getContent());
 }
 

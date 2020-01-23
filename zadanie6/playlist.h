@@ -1,7 +1,6 @@
 #ifndef PLAYER_MAIN_H
 #define PLAYER_MAIN_H
 
-#include "Media.h"
 #include "File.h"
 #include "IPlayMode.h"
 #include "OddEvenMode.h"

@@ -4,7 +4,7 @@
 #include "Audio.h"
 #include "Video.h"
 
-std::shared_ptr<Media> MediaFactory::build(const File &file) {
+std::shared_ptr<IPlayable> MediaFactory::build(const File &file) {
     try {
         std::shared_ptr<IMediaExtractor> extractor;
 

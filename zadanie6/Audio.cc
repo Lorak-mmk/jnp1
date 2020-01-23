@@ -2,15 +2,27 @@
 #include "Audio.h"
 #include "Exceptions.h"
 
-Audio::Audio(const File& file) {
-    if (file.getType() != "audio")
-        throw MediaException("unsupported type passed to Audio");
+namespace {
+    bool content_valid(const std::string &content) {
+        for (char ch : content) {
+            bool is_special = false;
+            if (ch == '.' || ch == ',' || ch == '!' || ch == '?' || ch == '\'' || ch == ':' || ch == ';' || ch == '-')
+                is_special = true;
 
-    artist = file.getAttrs().at("artist");  // at() throws exception if particular key doesn't exist.
-    title = file.getAttrs().at("title");
-    content = file.getContent();
+            if (!std::isalnum(ch) && !std::isblank(ch) && !is_special)
+                return false;
+        }
 
-    if (!content_valid())
+        return true;
+    }
+}
+
+Audio::Audio(const std::map<std::string, std::string>& attrs, const std::string& content) {
+    artist = attrs.at("artist");
+    title = attrs.at("title");
+    this->content = content;
+
+    if (!content_valid(this->content))
         throw MediaException("corrupt content");
 }
 
@@ -18,6 +30,6 @@ void Audio::play() {
     std::cout << "Song [" << artist << ", " << title << "]: " << content << "\n";
 }
 
-std::shared_ptr<Media> AudioExtractor::extract(const File &file) {
-    return std::make_shared<Audio>(file);
+std::shared_ptr<IPlayable> AudioExtractor::extract(const File &file) {
+    return std::make_shared<Audio>(file.getAttrs(), file.getContent());
 }

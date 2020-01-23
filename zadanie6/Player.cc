@@ -1,9 +1,8 @@
 #include "Player.h"
-#include "Media.h"
 #include "Exceptions.h"
 #include "MediaFactory.h"
 
-std::shared_ptr<Media> Player::openFile(const File& file) {
+std::shared_ptr<IPlayable> Player::openFile(const File& file) {
     try {
         return MediaFactory::build(file);
     }

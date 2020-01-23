@@ -5,11 +5,10 @@
 #include "File.h"
 
 #include "Playlist.h"
-#include "Media.h"
 
 class Player {
 public:
-    static std::shared_ptr<Media> openFile(const File& file);
+    static std::shared_ptr<IPlayable> openFile(const File& file);
     static std::shared_ptr<Playlist> createPlaylist(const std::string &name);
 };
 
