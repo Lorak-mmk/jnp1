@@ -33,6 +33,7 @@ Audio::Audio(const std::map<std::string, std::string>& attrs, const std::string&
     if (!attrs.count("artist") || !attrs.count("title")) {
         throw MediaException("(Audio)Required metadata fields not found");
     }
+
     artist = attrs.at("artist");
     title = attrs.at("title");
     this->content = content;

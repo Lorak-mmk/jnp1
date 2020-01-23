@@ -1,10 +1,8 @@
 #include "Playlist.h"
 #include <iostream>
 #include <utility>
-#include "Audio.h"
 #include "Exceptions.h"
 #include "SequenceMode.h"
-#include "Video.h"
 
 Playlist::Playlist(std::string name) : name(std::move(name)), elements(), mode(std::make_shared<SequenceMode>()) {}
 
