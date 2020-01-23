@@ -2,7 +2,7 @@
 #define PLAYER_MEDIA_H
 
 #include "IPlayable.h"
-#include "File.h"
+#include <string>
 
 class Media : public IPlayable {
 protected:

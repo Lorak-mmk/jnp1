@@ -13,7 +13,7 @@ public:
 
 private:
     std::string type;
-    std::string content ;
+    std::string content;
     std::map<std::string, std::string> attrs;
 };
 

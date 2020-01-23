@@ -8,7 +8,6 @@
 class IMediaExtractor {
 public:
     virtual std::shared_ptr<Media> extract(const File &file) = 0;
-    virtual ~IMediaExtractor() = default;
 };
 
 #endif //PLAYER_IMEDIAEXTRACTOR_H

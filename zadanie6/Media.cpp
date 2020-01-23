@@ -1,6 +1,5 @@
 #include "Media.h"
 #include "Exceptions.h"
-#include <iostream>
 
 bool Media::content_valid() {
     for (char ch : content) {

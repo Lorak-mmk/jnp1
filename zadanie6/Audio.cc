@@ -6,8 +6,7 @@ Audio::Audio(const File& file) {
     if (file.getType() != "audio")
         throw MediaException("unsupported type passed to Audio");
 
-    //TODO: throw exception if attrs don't exist
-    artist = file.getAttrs().at("artist");
+    artist = file.getAttrs().at("artist");  // at() throws exception if particular key doesn't exist.
     title = file.getAttrs().at("title");
     content = file.getContent();
 
@@ -20,6 +19,5 @@ void Audio::play() {
 }
 
 std::shared_ptr<Media> AudioExtractor::extract(const File &file) {
-    auto foo = std::make_shared<Audio>(file);
-    return std::static_pointer_cast<Media>(foo);
+    return std::make_shared<Audio>(file);
 }

@@ -13,6 +13,10 @@ std::shared_ptr<Media> Player::openFile(const File& file) {
 }
 
 std::shared_ptr<Playlist> Player::createPlaylist(const std::string &name) {
-    return std::make_shared<Playlist>(name);
+    try {
+        return std::make_shared<Playlist>(name);
+    }
+    catch  (const std::exception &e) {
+        throw PlaylistException(e.what());
+    }
 }
-

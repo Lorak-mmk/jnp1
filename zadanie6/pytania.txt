@@ -20,3 +20,15 @@ zmieniam póki co, ale jeśli to ma jakieś uzasadnienie o którym nie wiem to s
 6. Powydzielam Audio i Video do osobnych plików - bo tu raczej idea jest taka, że to są moduły, i jakby żeby pokazać że moóżna ich robić więcej bez modyfikacji istniejącego kodu
 
 7. Czy to jest do czegoś potrzebne, ma jakieś uzasadnienie? virtual ~IMediaExtractor() = default;
+
+
+
+nowe zmiany:
+ad 1, 2, 3, 6 super
+ad 7.  wyrzuciłem virtual ~IMediaExtractor() = default, nie wiedziałem wcześniej że bez tego zadziała.
+ad 4. tutaj też nie wiedziałem że bez castowania zadziała, zmieniłem w player, ale tez extractory w audio i video.
+ad throw exception if attrs don't exist, w audio i video - inicjuję attrs w kostruktorze, jeśli ni rzuci się wyjątek to
+    attrs zawsze istnieje (choć może być puste, ale wtedy at() rzuci wyjątek)
+
+dołożyłem łapanie wyjątków w playlist.cpp i sprawdzanie cyklu - psrawdzam tylko podczas play, może się zdarzyć że początkowo
+playlista będzie mniałą cykl, ale potem po jakimś remove już nie - wtedy play powinien zadziałać normalnie

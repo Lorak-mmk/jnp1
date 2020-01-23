@@ -33,7 +33,6 @@ Video::Video(const File &file) {
     if (file.getType() != "video")
         throw MediaException("unsupported type passed to Video");
 
-    //TODO: throw exception if attrs don't exist
     year = file.getAttrs().at("year");
     title = file.getAttrs().at("title");
     content = ::ROT13(file.getContent());
@@ -47,7 +46,6 @@ void Video::play() {
 }
 
 std::shared_ptr<Media> VideoExtractor::extract(const File &file) {
-    auto foo = std::make_shared<Video>(file);
-    return std::static_pointer_cast<Media>(foo);
+    return std::make_shared<Video>(file);
 }
 

@@ -26,23 +26,24 @@ namespace {
     }
 }
 
-File::File(const std::string &str) : attrs(), type(), content() {
-    try {
+File::File(const std::string &str) try : attrs(), type(), content() {
         const auto& data = ::split(str, '|');
 
         type = *data.begin();
         content = *std::prev(data.end());
+        attrs = std::map<std::string, std::string>();
 
         for (auto it = std::next(data.begin()); it < std::prev(data.end()); ++it) {
-            const auto& meta = ::split(*it, ':');
-            if(meta.size() == 1) throw FileException("Invalid metadata (no value)"); // e.g "audio|key|content"
+            const auto &meta = ::split(*it, ':');
+            if (meta.size() == 1)
+                throw FileException("Invalid metadata (no value)"); // e.g "audio|key|content"
+
             attrs[meta[0]] = merge_meta(meta);    // "artist:john:lennon"  =>  "artist": "john:lennon"
         }
     }
     catch (const std::exception &e) {   // Any subclass of std::exception (nothing else can be thrown here)
         throw FileException(e.what());
     }
-}
 
 const std::string& File::getType() const {
     return type;
