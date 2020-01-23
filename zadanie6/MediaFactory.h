@@ -12,7 +12,7 @@ public:
     static void registerFiletype(const std::string& name, const std::shared_ptr<IMediaExtractor>& extractor);
 
 private:
-    static std::map<std::string, std::shared_ptr<IMediaExtractor>> getFiletypes();
+    static std::map<std::string, std::shared_ptr<IMediaExtractor>>& getFiletypes();
 };
 
 #endif  // PLAYER_MEDIAFACTORY_H
