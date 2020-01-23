@@ -3,7 +3,6 @@
 #include "IMediaExtractor.h"
 
 std::shared_ptr<IPlayable> MediaFactory::build(const File& file) {
-
     if (!getFiletypes().count(file.getType())) {
         throw FileException("unsupported type");
     }
