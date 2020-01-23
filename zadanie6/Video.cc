@@ -50,7 +50,7 @@ bool is_number(const std::string& s) {
 }  // namespace
 
 Video::Video(const std::map<std::string, std::string>& attrs, const std::string& content) {
-    if(attrs.count("year") || !attrs.count("title")) {
+    if(!attrs.count("year") || !attrs.count("title")) {
         throw MediaException("(Video)Required metadata fields not found");
     }
     year = attrs.at("year");
