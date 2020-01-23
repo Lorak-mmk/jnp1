@@ -7,6 +7,7 @@
 Playlist::Playlist(std::string name) : name(std::move(name)), elements(), mode(std::make_shared<SequenceMode>()) {}
 
 bool Playlist::contains(IPlayable *other) {
+    if(this == other) return true;
     for (const auto &element : elements) {
         if (element->contains(other)) {
             return true;

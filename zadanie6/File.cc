@@ -12,6 +12,9 @@ std::vector<std::string> split(const std::string &str, char delimiter) {
     while (std::getline(iss, auxiliary, delimiter)) {
         data.push_back(auxiliary);
     }
+    if(*std::prev(str.end()) == delimiter) {
+        data.emplace_back("");
+    }
 
     return data;
 }
