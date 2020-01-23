@@ -1,7 +1,6 @@
 #include "Media.h"
 #include "Exceptions.h"
 
-
 bool Media::content_valid() {
     for (char ch : content) {
         bool is_special = false;

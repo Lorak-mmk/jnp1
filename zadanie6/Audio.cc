@@ -1,8 +1,8 @@
-#include <iostream>
 #include "Audio.h"
 #include "Exceptions.h"
+#include <iostream>
 
-Audio::Audio(const File& file) {
+Audio::Audio(const File &file) {
     if (file.getType() != "audio")
         throw MediaException("unsupported type passed to Audio");
 

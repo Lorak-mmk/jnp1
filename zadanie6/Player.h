@@ -9,7 +9,7 @@
 
 class Player {
 public:
-    static std::shared_ptr<Media> openFile(const File& file);
+    static std::shared_ptr<Media> openFile(const File &file);
     static std::shared_ptr<Playlist> createPlaylist(const std::string &name);
 };
 

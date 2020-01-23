@@ -9,25 +9,23 @@ namespace {
         std::stringstream iss(str);
         std::string auxiliary;
 
-        while (std::getline(iss, auxiliary, delimiter)) {
+        while (std::getline(iss, auxiliary, delimiter))
             data.push_back(auxiliary);
-        }
 
         return data;
     }
 
     std::string merge_meta(const std::vector<std::string> &meta) {
         std::string result;
-        for (auto it = std::next(meta.begin()); it != meta.end(); ++it) {
+        for (auto it = std::next(meta.begin()); it != meta.end(); ++it)
             result += (it == std::next(meta.begin()) ? *it : ":" + *it);
-        }
 
         return result;
     }
 }
 
 File::File(const std::string &str) try : attrs(), type(), content() {
-        const auto& data = ::split(str, '|');
+        const auto &data = ::split(str, '|');
 
         type = *data.begin();
         content = *std::prev(data.end());

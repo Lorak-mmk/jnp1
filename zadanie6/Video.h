@@ -6,7 +6,7 @@
 
 class Video : public Media {
 public:
-    explicit Video(const File& file);
+    explicit Video(const File &file);
     void play() override;
 
 private:
