@@ -31,6 +31,9 @@ std::string merge_meta(const std::vector<std::string> &meta) {
 
 File::File(const std::string &str) : type(), attrs(), content() {
     const auto &data = ::split(str, '|');
+    if(data.size() == 1) {
+        throw FileException("corrupt file");
+    }
 
     type = *data.begin();
     content = *std::prev(data.end());

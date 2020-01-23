@@ -39,7 +39,7 @@ Audio::Audio(const std::map<std::string, std::string>& attrs, const std::string&
     this->content = content;
 
     if (!::content_valid(this->content)) {
-        throw MediaException("Invalid characters in content");
+        throw MediaException("corrupt content");
     }
 }
 

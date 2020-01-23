@@ -69,7 +69,7 @@ Video::Video(const std::map<std::string, std::string>& attrs, const std::string&
     this->content = ::ROT13(content);
 
     if (!::content_valid(this->content) || !is_number(year)) {
-        throw MediaException("Invalid content");
+        throw MediaException("corrupt content");
     }
 }
 
