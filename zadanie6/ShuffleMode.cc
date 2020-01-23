@@ -1,4 +1,5 @@
 #include "ShuffleMode.h"
+#include "Exceptions.h"
 #include <algorithm>
 
 ShuffleMode::ShuffleMode(unsigned seed) : engine(seed) {}
@@ -10,5 +11,10 @@ std::vector<std::shared_ptr<IPlayable>> ShuffleMode::createOrder(std::vector<std
 }
 
 std::shared_ptr<IPlayMode> createShuffleMode(unsigned seed) {
-    return std::make_shared<ShuffleMode>(seed);
+    try {
+        return std::make_shared<ShuffleMode>(seed);
+    }
+    catch (...) {
+        throw ModeException("Exception while creating mode");
+    }
 }

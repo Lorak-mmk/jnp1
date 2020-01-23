@@ -10,7 +10,7 @@ Playlist::Playlist(std::string name) try : name(std::move(name)), elements(), mo
         throw PlaylistException("Bad playlist initialisation");
     }
 
-void Playlist::add(const std::shared_ptr<IPlayable>& element) {
+void Playlist::add(const std::shared_ptr<IPlayable> &element) {
     try {
         elements.push_back(element);
     }
@@ -19,7 +19,7 @@ void Playlist::add(const std::shared_ptr<IPlayable>& element) {
     }
 }
 
-void Playlist::add(const std::shared_ptr<IPlayable>& element, size_t position) {
+void Playlist::add(const std::shared_ptr<IPlayable> &element, size_t position) {
     try {
         elements.insert(elements.begin() + position, element);
     }
@@ -32,6 +32,7 @@ void Playlist::remove() {
     try {
         if (elements.empty())
             throw PlaylistException("prevent undefined behaviour");
+
         elements.pop_back();
     }
     catch (...) {

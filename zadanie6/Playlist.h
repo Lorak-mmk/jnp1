@@ -9,8 +9,8 @@
 class Playlist : public IPlayable {
 public:
     explicit Playlist(std::string name);
-    void add(const std::shared_ptr<IPlayable>& element);
-    void add(const std::shared_ptr<IPlayable>&, size_t position);
+    void add(const std::shared_ptr<IPlayable> &element);
+    void add(const std::shared_ptr<IPlayable> &element, size_t position);
     void remove();
     void remove(size_t position);
     void setMode(std::shared_ptr<IPlayMode> new_mode) noexcept;

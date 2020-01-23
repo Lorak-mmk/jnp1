@@ -1,6 +1,6 @@
-#include <iostream>
 #include "Audio.h"
 #include "Exceptions.h"
+#include <iostream>
 
 namespace {
     bool content_valid(const std::string &content) {
