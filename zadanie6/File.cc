@@ -31,7 +31,7 @@ std::string merge_meta(const std::vector<std::string> &meta) {
 
 File::File(const std::string &str) : type(), attrs(), content() {
     const auto &data = ::split(str, '|');
-    if(data.size() == 1) {
+    if(data.size() <= 1) {
         throw FileException("corrupt file");
     }
 
@@ -41,7 +41,7 @@ File::File(const std::string &str) : type(), attrs(), content() {
 
     for (auto it = std::next(data.begin()); it < std::prev(data.end()); ++it) {
         const auto &meta = ::split(*it, ':');
-        if (meta.size() == 1) {
+        if (meta.size() <= 1) {
             throw FileException("Invalid metadata (no value)");  // e.g "audio|key|content"
         }
 
