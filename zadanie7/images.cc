@@ -28,7 +28,7 @@ Image cond(const Region& region, const Image& this_way, const Image& that_way) {
 }
 
 Image lerp(Blend blend, Image this_way, Image that_way) {
-		return lift([](Color c, auto... args){ return c.weighted_mean(args...); }, this_way, that_way, blend);
+		return lift(&Color::weighted_mean, this_way, that_way, blend);
 }
 
 Image darken(Image image, Blend blend) {

@@ -17,11 +17,10 @@ inline auto compose(F&& f, Fs&&... functions) {
 		};
 }
 
-
 template<typename H, typename...Fs>
 inline auto lift(H&& h, Fs&&... functions) {
 		return [h, functions...](auto&&... args) {
-				return h(std::invoke(functions, std::forward<decltype(args)>(args)...)...);
+				return std::invoke(h, std::invoke(functions, std::forward<decltype(args)>(args)...)...);
 		};
 }
 
