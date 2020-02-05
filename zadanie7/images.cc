@@ -1,15 +1,14 @@
 #include <utility>
-
 #include "functional.h"
 #include "images.h"
 
 
 namespace Details {
-    Transform translate(const Vector v) {
+    Transform translate_point(const Vector v) {
         return [=](const Point p) { return Point(p.first - v.first, p.second - v.second); };
     }
 
-    Transform scale(double s) {
+    Transform scale_point(double s) {
         return [=](const Point p) { return Point(p.first / s, p.second / s, p.is_polar); };
     }
 

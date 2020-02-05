@@ -12,7 +12,7 @@
 // co znacznie upraszcza kod funkcji lerp i ogólnie zwiększa elastyczność compose/lift.
 
 inline auto compose() {
-    return [](auto&& x) { return std::forward<decltype(x)>(x); };
+    return [](auto&& x) -> decltype(x)&& { return std::forward<decltype(x)>(x); };
 }
 
 // Każdą funkcję kopiujemy jedynie raz, dzięki liczeniu outer przed zwróceniem lambdy.

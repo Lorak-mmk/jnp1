@@ -12,3 +12,5 @@ set(SRC_FILES bmp.cc color.cc coordinate.cc images.cc)
 add_executable(example example.cc ${SRC_FILES})
 
 add_executable(test test.cc  ${SRC_FILES})
+
+add_executable(test2 test2.cc  ${SRC_FILES})
