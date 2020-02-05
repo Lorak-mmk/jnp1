@@ -11,8 +11,9 @@ inline auto compose() {
 
 template <typename F, typename... Fs>
 inline auto compose(F&& f, Fs&&... functions) {
-    return [f, functions...](auto&&... args) {
-        return std::invoke(compose(functions...), std::invoke(f, std::forward<decltype(args)>(args)...));
+    auto outer = compose(functions...);
+    return [f, outer](auto&&... args) {
+        return std::invoke(outer, std::invoke(f, std::forward<decltype(args)>(args)...));
     };
 }
 
