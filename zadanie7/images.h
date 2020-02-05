@@ -8,21 +8,15 @@
 
 
 namespace Details {
-		inline auto translate(const Vector v, int scale) {
-				return [v, scale](const Point p) { return Point(p.first + v.first * scale, p.second + v.second * scale); };
-		}
+		using Transform = std::function<Point(const Point)>;
 
-		inline auto scale(double s) {
-				return [=](const Point p) { return Point(p.first / s, p.second / s, p.is_polar); };
-		}
+		Transform translate(Vector v, int scale);
 
-		inline auto sc(int n, double d) {
-				return [=](const Point p) { return Point(p.first, p.second * d * n / (2 * M_PI), true); };
-		}
+		Transform scale(double s);
 
-		inline auto rotate_polar(double phi) {
-				return [=](const Point p){ return Point(p.first, p.second + phi, true); };
-		}
+		Transform sc(int n, double d);
+
+		Transform rotate_polar(double phi);
 }
 
 
@@ -87,8 +81,7 @@ inline Base_image<T> polar_checker(double d, int n, T this_way, T that_way) {
 template<typename T>
 inline Base_image<T> rings(Point q, double d, T this_way, T that_way) {
 		return [=](const Point p) {
-				auto dist_units = static_cast<uint64_t>(distance(q, p) / d );
-				return dist_units % 2 ? that_way : this_way;
+				return static_cast<uint64_t>(distance(q, p) / d ) % 2 ? that_way : this_way;
 		};
 }
 
@@ -100,7 +93,7 @@ inline Base_image<T> vertical_stripe(double d, T this_way, T that_way) {
 		};
 }
 
-Image cond(Region region, Image this_way, Image that_way);
+Image cond(const Region& region, const Image& this_way, const Image& that_way);
 
 Image lerp(Blend blend, Image this_way, Image that_way);
 
