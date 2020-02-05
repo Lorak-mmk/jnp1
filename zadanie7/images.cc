@@ -1,24 +1,25 @@
+#include <utility>
+
+#include "functional.h"
 #include "images.h"
 
-#include <utility>
-#include "functional.h"
 
 namespace Details {
-Transform translate(const Vector v) {
-    return [=](const Point p) { return Point(p.first - v.first, p.second - v.second); };
-}
+    Transform translate(const Vector v) {
+        return [=](const Point p) { return Point(p.first - v.first, p.second - v.second); };
+    }
 
-Transform scale(double s) {
-    return [=](const Point p) { return Point(p.first / s, p.second / s, p.is_polar); };
-}
+    Transform scale(double s) {
+        return [=](const Point p) { return Point(p.first / s, p.second / s, p.is_polar); };
+    }
 
-Transform sc(int n, double d) {
-    return [=](const Point p) { return Point(p.first, p.second * d * n / (2 * M_PI), true); };
-}
+    Transform sc(int n, double d) {
+        return [=](const Point p) { return Point(p.first, p.second * d * n / (2 * M_PI), true); };
+    }
 
-Transform rotate_polar(double phi) {
-    return [=](const Point p) { return Point(p.first, p.second - phi, true); };
-}
+    Transform rotate_polar(double phi) {
+        return [=](const Point p) { return Point(p.first, p.second - phi, true); };
+    }
 }  // namespace Details
 
 Image cond(const Region& region, const Image& this_way, const Image& that_way) {

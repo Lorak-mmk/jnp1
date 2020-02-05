@@ -16,17 +16,17 @@ inline auto compose() {
 }
 
 // Każdą funkcję kopiujemy jedynie raz, dzięki liczeniu outer przed zwróceniem lambdy.
-template <typename F, typename... Fs>
-inline auto compose(F&& f, Fs&&... functions) {
+template<typename F, typename... Fs>
+inline auto compose(F&& f, Fs&& ... functions) {
     auto outer = compose(std::forward<Fs>(functions)...);
-    return [f, outer](auto&&... args) {
+    return [f, outer](auto&& ... args) {
         return std::invoke(outer, std::invoke(f, std::forward<decltype(args)>(args)...));
     };
 }
 
-template <typename H, typename... Fs>
-inline auto lift(H&& h, Fs&&... functions) {
-    return [h, functions...](auto&&... args) {
+template<typename H, typename... Fs>
+inline auto lift(H&& h, Fs&& ... functions) {
+    return [h, functions...](auto&& ... args) {
         return std::invoke(h, std::invoke(functions, std::forward<decltype(args)>(args)...)...);
     };
 }
