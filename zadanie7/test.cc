@@ -49,4 +49,8 @@ int main() {
 
 		assert(compose([](auto x) { return x + 1; },
 									 [](auto x) { return x * x; })(1) == 4);
+
+		auto iden = compose();
+		assert(iden(13) == 13);
+		assert(iden(std::string("abc")) == std::string("abc"));
 }

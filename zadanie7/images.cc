@@ -4,8 +4,8 @@
 #include "functional.h"
 
 namespace Details {
-Transform translate(const Vector v, int scale) {
-    return [=](const Point p) { return Point(p.first + v.first * scale, p.second + v.second * scale); };
+Transform translate(const Vector v) {
+    return [=](const Point p) { return Point(p.first - v.first, p.second - v.second); };
 }
 
 Transform scale(double s) {
@@ -17,7 +17,7 @@ Transform sc(int n, double d) {
 }
 
 Transform rotate_polar(double phi) {
-    return [=](const Point p) { return Point(p.first, p.second + phi, true); };
+    return [=](const Point p) { return Point(p.first, p.second - phi, true); };
 }
 }  // namespace Details
 

@@ -7,14 +7,20 @@
 #include "coordinate.h"
 
 namespace Details {
+// Przekształcenie geometryczne obrazu (Point -> Point).
+// Przekształca punkt z wynikowej powierzchni na punkt ze źródłowej powierzchni.
 using Transform = std::function<Point(const Point)>;
 
-Transform translate(Vector v, int scale);
+// Przesunięcie płaszczyzny o zadany Vector.
+Transform translate(Vector v);
 
+// Przeskalowanie płaszczyzny o współczynnik s (względem punktu (0, 0)).
 Transform scale(double s);
 
+// Skalowanie kąta punktu o współrzędnych polarnych.
 Transform sc(int n, double d);
 
+// Obrót punktu o koordynatahc polarnych względem środka obrazu o kąt phi.
 Transform rotate_polar(double phi);
 }  // namespace Details
 
@@ -36,12 +42,12 @@ inline Base_image<T> constant(const T t) {
 
 template <typename T>
 inline Base_image<T> rotate(Base_image<T> image, double phi) {
-    return compose(to_polar, Details::rotate_polar(-phi), from_polar, image);
+    return compose(to_polar, Details::rotate_polar(phi), from_polar, image);
 }
 
 template <typename T>
 inline Base_image<T> translate(Base_image<T> image, Vector v) {
-    return compose(Details::translate(v, -1), image);
+    return compose(Details::translate(v), image);
 }
 
 template <typename T>
