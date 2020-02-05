@@ -18,7 +18,7 @@ auto compose(F&& f){
 template <typename F, typename... Fs>
 auto compose(F&& f, Fs&&... functions) {
 		return [&f, &functions...](auto&&... args){
-				return f(compose(std::forward<Fs>(functions)...)(std::forward<decltype(args)>(args)...));
+				return compose(std::forward<Fs>(functions)...)(std::forward<F>(f)(std::forward<decltype(args)>(args)...));
 		};
 }
 

@@ -24,7 +24,7 @@ using Blend = Base_image<Fraction>;
 
 template<typename T>
 inline Base_image<T> constant(const T& t) {
-		return [=](Point) { return t; };
+		return [=](const Point) { return t; };
 }
 
 
@@ -36,7 +36,7 @@ inline Base_image<T> rotate(Base_image<T> image, double phi) {
 
 template<typename T>
 inline Base_image<T> translate(Base_image<T> image, Vector v) {
-		return [](Point p){};
+		return image;
 }
 
 
@@ -48,7 +48,7 @@ inline Base_image<T> scale(Base_image<T> image, double s) {
 
 template<typename T>
 inline Base_image<T> circle(Point q, double r, T inner, T outer) {
-		return constant(inner);
+		return [=](const Point p){ return distance(q, p) <= r ? inner : outer; };
 }
 
 
@@ -66,13 +66,18 @@ inline Base_image<T> polar_checker(double d, int n, T this_way, T that_way) {
 
 template<typename T>
 inline Base_image<T> rings(Point q, double d, T this_way, T that_way) {
-		return constant(this_way);
+		return [=](const Point p){
+				auto x = static_cast<uint64_t>(distance(q, p) / (2 * d) );
+				return x % 2 ? this_way : that_way;
+		};
 }
 
 
 template<typename T>
 inline Base_image<T> vertical_stripe(double d, T this_way, T that_way) {
-		return constant(this_way);
+		return [=](const Point p){
+				return std::abs(p.first) / 2 <= d ? this_way : that_way;
+		};
 }
 
 Image cond(Region region, Image this_way, Image that_way);

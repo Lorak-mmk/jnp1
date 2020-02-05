@@ -36,8 +36,8 @@ int main() {
 		assert(compose(f)(2) == 4);
 		assert(compose(f, f)(2) == 6);
 		assert(compose(f, h)(2) == 9);
-		assert(compose(f, g)(2, 3));
-		assert(compose(f, h, g)(2, 3) == 12);
+		assert(compose(g, f)(2, 3));
+		assert(compose(g, h, f)(2, 3) == 12);
 
 		assert(lift(g, f, h)(3) == 13);
 		assert(lift(l)(1) == 13);
@@ -46,4 +46,7 @@ int main() {
 		auto func2 = getFunc2();
 		assert(func(8) == 64);
 		assert(func2(8) == 400);
+
+		assert(compose([](auto x) { return x + 1; },
+									 [](auto x) { return x * x; })(1) == 4);
 }
