@@ -1,27 +1,26 @@
 #ifndef FUNCTIONAL_H
 #define FUNCTIONAL_H
 
-#include <utility>
 #include <cstdio>
 #include <functional>
-
+#include <utility>
 
 inline auto compose() {
-		return [](auto&& x) { return std::forward<decltype(x)>(x); };
+    return [](auto&& x) { return std::forward<decltype(x)>(x); };
 }
 
 template <typename F, typename... Fs>
 inline auto compose(F&& f, Fs&&... functions) {
-		return [f, functions...](auto&&... args){
-				return compose(functions...)(f(std::forward<decltype(args)>(args)...));
-		};
+    return [f, functions...](auto&&... args) {
+        return std::invoke(compose(functions...), std::invoke(f, std::forward<decltype(args)>(args)...));
+    };
 }
 
-template<typename H, typename...Fs>
+template <typename H, typename... Fs>
 inline auto lift(H&& h, Fs&&... functions) {
-		return [h, functions...](auto&&... args) {
-				return std::invoke(h, std::invoke(functions, std::forward<decltype(args)>(args)...)...);
-		};
+    return [h, functions...](auto&&... args) {
+        return std::invoke(h, std::invoke(functions, std::forward<decltype(args)>(args)...)...);
+    };
 }
 
-#endif //FUNCTIONAL_H
+#endif  // FUNCTIONAL_H
