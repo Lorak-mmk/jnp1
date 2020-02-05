@@ -30,7 +30,7 @@ using Image = Base_image<Color>;
 using Blend = Base_image<Fraction>;
 
 template <typename T>
-inline Base_image<T> constant(T t) {
+inline Base_image<T> constant(const T t) {
     return [=](const Point) { return t; };
 }
 

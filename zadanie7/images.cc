@@ -5,7 +5,7 @@
 
 namespace Details {
 Transform translate(const Vector v, int scale) {
-    return [v, scale](const Point p) { return Point(p.first + v.first * scale, p.second + v.second * scale); };
+    return [=](const Point p) { return Point(p.first + v.first * scale, p.second + v.second * scale); };
 }
 
 Transform scale(double s) {
