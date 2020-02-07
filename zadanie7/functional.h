@@ -12,14 +12,16 @@
 // co znacznie upraszcza kod funkcji lerp i ogólnie zwiększa elastyczność compose/lift.
 
 inline auto compose() {
-    return [](auto&& x) -> decltype(x)&& { return std::forward<decltype(x)>(x); };
+    return [](auto&& arg) -> decltype(arg) { return std::forward<decltype(arg)>(arg); };
 }
+
 
 // Każdą funkcję kopiujemy jedynie raz, dzięki liczeniu outer przed zwróceniem lambdy.
 template<typename F, typename... Fs>
 inline auto compose(F&& f, Fs&& ... functions) {
     auto outer = compose(std::forward<Fs>(functions)...);
-    return [f, outer](auto&& ... args) {
+    return [f, outer](auto&& ... args)
+            -> std::invoke_result_t<decltype(outer), std::invoke_result_t<F, decltype(args) ...>> {
         return std::invoke(outer, std::invoke(f, std::forward<decltype(args)>(args)...));
     };
 }
